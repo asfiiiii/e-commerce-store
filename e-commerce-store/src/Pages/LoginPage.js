@@ -1,12 +1,11 @@
 import React from "react";
 import Login from "../Components/Auth/Login";
-import SignUp from "../Components/Auth/SignUp";
-function Auth() {
+function LoginPage() {
   return (
     <>
-      <SignUp />
+      <Login />
     </>
   );
 }
 
-export default Auth;
+export default LoginPage;

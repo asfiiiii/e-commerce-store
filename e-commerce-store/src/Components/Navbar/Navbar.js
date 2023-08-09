@@ -70,8 +70,9 @@ export default function Navbar(props) {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      <button
+                      <Link
                         type="button"
+                        to={"/cart"}
                         className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
                         <span className="absolute -inset-1.5" />
@@ -80,7 +81,7 @@ export default function Navbar(props) {
                           className="h-6 w-6"
                           aria-hidden="true"
                         />
-                      </button>
+                      </Link>
                       <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                         4
                       </span>
@@ -185,8 +186,9 @@ export default function Navbar(props) {
                         {user.email}
                       </div>
                     </div>
-                    <button
+                    <Link
                       type="button"
+                      to={"/cart"}
                       className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                       <span className="absolute -inset-1.5" />
@@ -195,7 +197,7 @@ export default function Navbar(props) {
                         className="h-6 w-6"
                         aria-hidden="true"
                       />
-                    </button>
+                    </Link>
                     <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                       4
                     </span>
