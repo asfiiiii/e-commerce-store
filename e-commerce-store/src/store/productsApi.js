@@ -42,3 +42,66 @@ export const fetchFilteredProductstData = (queryData) => {
     }
   };
 };
+
+export const fetchCategory = () => {
+  return async (dispatch) => {
+    const fetchCategories = async () => {
+      const response = await fetch("http://localhost:8080/category");
+
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const category = await fetchCategories();
+      dispatch(productActions.showCategory({ category: category }));
+    } catch (err) {
+      return;
+    }
+  };
+};
+export const fetchBrand = () => {
+  return async (dispatch) => {
+    const fetchBrands = async () => {
+      const response = await fetch("http://localhost:8080/brands");
+
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const brands = await fetchBrands();
+      dispatch(productActions.showBrands({ brands: brands }));
+    } catch (err) {
+      return;
+    }
+  };
+};
+export const fetchSelectedProduct = (id) => {
+  return async (dispatch) => {
+    const fetchSpecificProduct = async (id) => {
+      const response = await fetch("http://localhost:8080/products/" + id);
+
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const selectedProduct = await fetchSpecificProduct(id);
+      dispatch(
+        productActions.showSelected({ selectedProduct: selectedProduct })
+      );
+    } catch (err) {
+      return;
+    }
+  };
+};

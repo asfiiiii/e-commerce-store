@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import {
   fetchFilteredProductstData,
   fetchProductstData,
+  fetchBrand,
+  fetchCategory,
 } from "../../store/productsApi";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -34,40 +36,6 @@ const subCategories = [
   { name: "Hip Bags", href: "#" },
   { name: "Laptop Sleeves", href: "#" },
 ];
-const filters = [
-  {
-    id: "color",
-    name: "Color",
-    options: [
-      { value: "white", label: "White", checked: false },
-      { value: "beige", label: "Beige", checked: false },
-      { value: "blue", label: "Blue", checked: true },
-      { value: "brown", label: "Brown", checked: false },
-      { value: "green", label: "Green", checked: false },
-      { value: "purple", label: "Purple", checked: false },
-    ],
-  },
-  {
-    id: "category",
-    name: "Category",
-    options: [
-      { value: "smartphones", label: "Smartphones", checked: false },
-      { value: "laptops", label: "Laptops", checked: false },
-    ],
-  },
-  {
-    id: "size",
-    name: "Size",
-    options: [
-      { value: "2l", label: "2L", checked: false },
-      { value: "6l", label: "6L", checked: false },
-      { value: "12l", label: "12L", checked: false },
-      { value: "18l", label: "18L", checked: false },
-      { value: "20l", label: "20L", checked: false },
-      { value: "40l", label: "40L", checked: true },
-    ],
-  },
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -77,6 +45,8 @@ export default function Products() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchProductstData());
+    dispatch(fetchCategory());
+    dispatch(fetchBrand());
   }, [dispatch]);
 
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -94,12 +64,27 @@ export default function Products() {
       _sort: option._sort,
       _order: option._order,
     };
-    console.log(newFilter);
     setFilterData(newFilter);
     dispatch(fetchFilteredProductstData(newFilter));
   };
 
   const productsData = useSelector((state) => state.products.products);
+  const brands = useSelector((state) => state.products.brands);
+  const category = useSelector((state) => state.products.category);
+
+  const filters = [
+    {
+      id: "brand",
+      name: "Brands",
+      options: brands,
+    },
+    {
+      id: "category",
+      name: "Category",
+      options: category,
+    },
+  ];
+
   return (
     <div className="bg-white">
       <div>
@@ -383,7 +368,10 @@ export default function Products() {
 
                     <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                       {productsData.map((product) => (
-                        <Link to={"/prodDetails"}>
+                        <Link
+                          key={product.id}
+                          to={`/prodDetails/${product.id}`}
+                        >
                           <div key={product.id} className="group relative">
                             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                               <img
