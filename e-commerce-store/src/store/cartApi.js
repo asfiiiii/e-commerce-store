@@ -42,6 +42,7 @@ export const fetchCartbyId = (id) => {
     try {
       const cart = await fetchCart(id);
       dispatch(cartActions.showCartItems({ items: cart }));
+      return cart;
     } catch (err) {
       return;
     }
@@ -97,6 +98,16 @@ export const deleteItemfromCart = (cartId) => {
       dispatch(cartActions.removeItemFromCart({ id: id }));
     } catch (error) {
       return;
+    }
+  };
+};
+
+export const resetCartAfterOrder = (id) => {
+  return async (dispatch) => {
+    const response = await dispatch(fetchCartbyId(id));
+
+    for (let item of response) {
+      await dispatch(deleteItemfromCart(item.id));
     }
   };
 };

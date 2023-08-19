@@ -105,3 +105,55 @@ export const fetchSelectedProduct = (id) => {
     }
   };
 };
+export const createNewProduct = (product) => {
+  return async (dispatch) => {
+    const createProd = async (prodData) => {
+      const response = await fetch("http://localhost:8080/products/", {
+        method: "POST",
+        body: JSON.stringify(prodData),
+        headers: { "content-type": "application/json" },
+      });
+
+      if (!response.ok) {
+        return;
+      }
+      const data = await response.json();
+      return data;
+    };
+
+    try {
+      const prod = await createProd(product);
+      dispatch(productActions.addNewProduct({ product: prod }));
+    } catch (err) {
+      return;
+    }
+  };
+};
+
+export const updateProductData = (prodData) => {
+  return async (dispatch) => {
+    try {
+      const updateProduct = async (product) => {
+        const id = product.id;
+        const response = await fetch("http://localhost:8080/products/" + id, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(product),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to Update Product");
+        }
+
+        const data = await response.json();
+        return data;
+      };
+
+      const prod = await updateProduct(prodData);
+
+      dispatch(productActions.updateProduct({ product: prod }));
+    } catch (error) {
+      return;
+    }
+  };
+};

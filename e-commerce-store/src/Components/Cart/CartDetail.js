@@ -11,7 +11,7 @@ export default function CartDetail() {
     return amount + currentItem.price * currentItem.quantity;
   }, 0);
   const totalQuantity = cart
-    .map((item) => item.quantity)
+    .map((item) => +item.quantity)
     .reduce((total, quantity) => total + quantity, 0);
 
   const quantityHandler = (e, product) => {

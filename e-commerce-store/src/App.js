@@ -1,18 +1,35 @@
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./Pages/Home";
+import ProductList from "./Pages/ProductsList";
 import SignupPage from "./Pages/SignupPage";
 import LoginPage from "./Pages/LoginPage";
 import Cart from "./Pages/Cart";
 import Checkout from "./Pages/CheckoutForm";
+import OrderSuccess from "./Pages/orderSuccess";
+import PageNotFound from "./Pages/pageNotFound";
 import ProductDetail from "./Pages/ProductDetails";
+import UserOrder from "./Pages/UserOrder";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchCartbyId } from "./store/cartApi";
+import UserProfile from "./Pages/UserProfile";
+import { getUserDetails } from "./store/orderApi";
+import Logout from "./Components/Logout/Logout";
+import Protected from "./Pages/Protected";
+import AdminProducts from "./Components/Products/AdminProducts";
+import AdminOrderPanel from "./Components/Order/AdminOrderPanel";
+import AddProduct from "./Components/Products/AddProduct";
+import EditProduct from "./Components/Products/EditProduct";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/prodDetails",
+    element: <ProductList />,
   },
   {
     path: "prodDetails/:id",
@@ -31,6 +48,48 @@ const router = createBrowserRouter([
 
         element: <SignupPage />,
       },
+      {
+        path: "logout",
+
+        element: <Logout />,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    children: [
+      {
+        path: "products",
+        element: (
+          <Protected>
+            <AdminProducts />
+          </Protected>
+        ),
+      },
+      {
+        path: "addProduct",
+        element: (
+          <Protected>
+            <AddProduct />
+          </Protected>
+        ),
+      },
+      {
+        path: "editProduct/:id",
+        element: (
+          <Protected>
+            <EditProduct />
+          </Protected>
+        ),
+      },
+      {
+        path: "orderPanel",
+        element: (
+          <Protected>
+            <AdminOrderPanel />
+          </Protected>
+        ),
+      },
     ],
   },
   {
@@ -41,6 +100,22 @@ const router = createBrowserRouter([
     path: "/checkout",
     element: <Checkout />,
   },
+  {
+    path: "/orderSuccess/:id",
+    element: <OrderSuccess />,
+  },
+  {
+    path: "/userOrder",
+    element: <UserOrder />,
+  },
+  {
+    path: "/userProfile",
+    element: <UserProfile />,
+  },
+  {
+    path: "*",
+    element: <PageNotFound />,
+  },
 ]);
 function App() {
   const dispatch = useDispatch();
@@ -48,7 +123,8 @@ function App() {
 
   useEffect(() => {
     if (loggedUser) {
-      dispatch(fetchCartbyId(loggedUser[0].id));
+      dispatch(fetchCartbyId(loggedUser.id));
+      dispatch(getUserDetails(loggedUser.id));
     }
   }, [dispatch, loggedUser]);
   return <RouterProvider router={router} />;

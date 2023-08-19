@@ -15,14 +15,17 @@ const userSlice = createSlice({
     },
 
     loginUserSuccess(state, action) {
-      state.loggedUsers = action.payload.loggedUser;
+      state.loggedUsers = action.payload.loggedUser[0];
       state.errors = null;
     },
     loginUserError(state, action) {
       state.errors = action.payload.error;
     },
     updateUserAddress(state, action) {
-      state.loggedUsers = action.payload.userAddress;
+      state.loggedUsers = action.payload;
+    },
+    logoutUser(state) {
+      state.loggedUsers = null;
     },
   },
 });

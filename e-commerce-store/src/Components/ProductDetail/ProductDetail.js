@@ -83,7 +83,7 @@ export default function Example() {
   const loggedUser = useSelector((state) => state.users.loggedUsers);
   const submitCartHandler = (e) => {
     e.preventDefault();
-    const newItem = { ...selectedProduct, quantity: 1, user: loggedUser[0].id };
+    const newItem = { ...selectedProduct, quantity: 1, user: loggedUser.id };
     delete newItem["id"];
     dispatch(addItemtoCart(newItem));
     setIsItemAdded(true);
@@ -131,7 +131,7 @@ export default function Example() {
             </nav>
 
             {/* Image gallery */}
-            {/* <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
+            <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
               <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
                 <img
                   src={selectedProduct.images[0]}
@@ -162,7 +162,7 @@ export default function Example() {
                   className="h-full w-full object-cover object-center"
                 />
               </div>
-            </div> */}
+            </div>
 
             {/* Product info */}
             <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pb-24 lg:pt-16">

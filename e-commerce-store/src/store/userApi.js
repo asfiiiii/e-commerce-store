@@ -58,7 +58,7 @@ export const updateUserAddress = (adress) => {
     const update = async (userAddress) => {
       const id = userAddress.id;
       console.log(id);
-      const response = await fetch("http://localhost:8080/users/" + id, {
+      const response = await fetch("http://localhost:8080/orders/" + id, {
         method: "PATCH",
         body: JSON.stringify(userAddress),
         headers: { "content-type": "application/json" },
@@ -75,5 +75,10 @@ export const updateUserAddress = (adress) => {
     const updatedUser = await update(adress);
 
     dispatch(userActions.updateUserAddress({ userAddress: updatedUser }));
+  };
+};
+export const logoutCurrentUser = () => {
+  return async (dispatch) => {
+    dispatch(userActions.logoutUser());
   };
 };

@@ -1,13 +1,15 @@
 import React from "react";
+import Home from "../Components/Home/Home";
 import Navbar from "../Components/Navbar/Navbar";
-import Products from "../Components/Products/Products";
-import ProductDetails from "../Components/ProductDetail/ProductDetail";
-function Home() {
+
+function HomePage() {
   return (
-    <Navbar>
-      <Products />
-    </Navbar>
+    <>
+      <Navbar>
+        <Home />
+      </Navbar>
+    </>
   );
 }
 
-export default Home;
+export default HomePage;

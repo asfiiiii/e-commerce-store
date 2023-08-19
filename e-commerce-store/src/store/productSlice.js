@@ -22,9 +22,15 @@ const productSlice = createSlice({
     showSelected(state, action) {
       state.selectedProduct = action.payload.selectedProduct;
     },
-    // showFilteredProducts(state, action) {
-    //   state.products = action.payload.products;
-    // },
+    addNewProduct(state, action) {
+      state.products.push(action.payload.product);
+    },
+    updateProduct(state, action) {
+      const index = state.products.findIndex(
+        (product) => product.id === action.payload.product.id
+      );
+      state.products[index] = action.payload.product;
+    },
   },
 });
 

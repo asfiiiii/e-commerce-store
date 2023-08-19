@@ -23,14 +23,20 @@ const navigation = [
   { name: "Calendar", href: "#", current: false },
   { name: "Reports", href: "#", current: false },
 ];
+const adminNavigation = [
+  { name: "Dashboard", href: "/", current: true },
+  { name: "Products", href: "/admin/products", current: false },
+  { name: "Orders", href: "/admin/orderPanel", current: false },
+];
 const authNavigation = [
   { name: "Login", to: "/auth/login", current: false },
   { name: "Signup", to: "/auth/signup", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Your Profile", href: "userProfile" },
+  { name: "My Orders", href: "/userOrder" },
+  { name: "Sign out", href: "/auth/logout" },
+  { name: "Admin", href: "/admin/products" },
 ];
 
 function classNames(...classes) {
@@ -67,21 +73,37 @@ export default function Navbar(props) {
 
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
-                          <a
-                            key={item.name}
-                            href={item.href}
-                            className={classNames(
-                              item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                              "rounded-md px-3 py-2 text-sm font-medium"
-                            )}
-                            aria-current={item.current ? "page" : undefined}
-                          >
-                            {item.name}
-                          </a>
-                        ))}
+                        {loggedUser && loggedUser.role === "admin"
+                          ? adminNavigation.map((item) => (
+                              <Link
+                                key={item.name}
+                                to={item.href}
+                                className={classNames(
+                                  item.current
+                                    ? "bg-gray-900 text-white"
+                                    : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                  "rounded-md px-3 py-2 text-sm font-medium"
+                                )}
+                                aria-current={item.current ? false : true}
+                              >
+                                {item.name}
+                              </Link>
+                            ))
+                          : navigation.map((item) => (
+                              <Link
+                                key={item.name}
+                                to={item.href}
+                                className={classNames(
+                                  item.current
+                                    ? "bg-gray-900 text-white"
+                                    : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                  "rounded-md px-3 py-2 text-sm font-medium"
+                                )}
+                                aria-current={item.current ? "page" : undefined}
+                              >
+                                {item.name}
+                              </Link>
+                            ))}
                       </div>
                     </div>
                   </div>
@@ -100,6 +122,11 @@ export default function Navbar(props) {
                             aria-hidden="true"
                           />
                         </Link>
+                        {loggedUser && loggedUser.role === "admin" && (
+                          <span className="inline-flex items-center rounded-md bg-red-50 ml-2 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                            Admin
+                          </span>
+                        )}
                         {cart && cart.length > 0 && (
                           <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                             {cart && cart.length}
@@ -131,15 +158,15 @@ export default function Navbar(props) {
                               {userNavigation.map((item) => (
                                 <Menu.Item key={item.name}>
                                   {({ active }) => (
-                                    <a
-                                      href={item.href}
+                                    <Link
+                                      to={item.href}
                                       className={classNames(
                                         active ? "bg-gray-100" : "",
                                         "block px-4 py-2 text-sm text-gray-700"
                                       )}
                                     >
                                       {item.name}
-                                    </a>
+                                    </Link>
                                   )}
                                 </Menu.Item>
                               ))}
@@ -193,22 +220,39 @@ export default function Navbar(props) {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                  {navigation.map((item) => (
-                    <Disclosure.Button
-                      key={item.name}
-                      as="a"
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "bg-gray-900 text-white"
-                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                        "block rounded-md px-3 py-2 text-base font-medium"
-                      )}
-                      aria-current={item.current ? "page" : undefined}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
-                  ))}
+                  {loggedUser && loggedUser.role === "admin"
+                    ? adminNavigation.map((item) => (
+                        <Disclosure.Button
+                          key={item.name}
+                          as="a"
+                          href={item.href}
+                          className={classNames(
+                            item.current
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "block rounded-md px-3 py-2 text-base font-medium"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          {item.name}
+                        </Disclosure.Button>
+                      ))
+                    : navigation.map((item) => (
+                        <Disclosure.Button
+                          key={item.name}
+                          as="a"
+                          href={item.href}
+                          className={classNames(
+                            item.current
+                              ? "bg-gray-900 text-white"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                            "block rounded-md px-3 py-2 text-base font-medium"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          {item.name}
+                        </Disclosure.Button>
+                      ))}
                 </div>
                 {loggedUser ? (
                   <div className="border-t border-gray-700 pb-3 pt-4">
@@ -240,6 +284,11 @@ export default function Navbar(props) {
                           aria-hidden="true"
                         />
                       </Link>
+                      {loggedUser && loggedUser.role === "admin" && (
+                        <span className="inline-flex items-center rounded-md bg-red-50 ml-2 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                          Admin
+                        </span>
+                      )}
                       {cart && cart.length > 0 && (
                         <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                           {cart && cart.length}
