@@ -5,7 +5,9 @@ const CategoryRoutes = require("./Routes/CategoryRoutes");
 const BrandRoutes = require("./Routes/BrandsRoutes");
 const cors = require("cors");
 const app = express();
-const db = ConnectDB();
+
+// Database Connection
+ConnectDB();
 
 // Middleware to parse JSON data
 app.use(express.json());
