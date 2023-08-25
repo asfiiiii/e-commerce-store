@@ -1,25 +1,32 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCartItem, deleteItemfromCart } from "../../store/cartApi";
+import { fetchCartbyId } from "../../store/cartApi";
 
 export default function CartDetail() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
+  const user = useSelector((state) => state.users.loggedUsers);
 
+  useEffect(() => {
+    dispatch(fetchCartbyId(user.id));
+  }, [dispatch, user]);
+  console.log(cart);
   const totalAmount = cart.reduce((amount, currentItem) => {
-    return amount + currentItem.price * currentItem.quantity;
+    return amount + currentItem.product.price * currentItem.quantity;
   }, 0);
   const totalQuantity = cart
     .map((item) => +item.quantity)
     .reduce((total, quantity) => total + quantity, 0);
 
-  const quantityHandler = (e, product) => {
-    dispatch(updateCartItem({ ...product, quantity: e.target.value }));
-  };
-  const removeItemHandler = (e, product) => {
+  const quantityHandler = (e, item) => {
     e.preventDefault();
-    dispatch(deleteItemfromCart(product.id));
+    dispatch(updateCartItem({ id: item.id, quantity: e.target.value }));
+  };
+  const removeItemHandler = (e, item) => {
+    e.preventDefault();
+    dispatch(deleteItemfromCart(item.id));
   };
   return (
     <>
@@ -33,12 +40,12 @@ export default function CartDetail() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flow-root">
               <ul className="-my-4 md:-my-6 divide-y divide-gray-200">
-                {cart.map((product) => (
-                  <li key={product.id} className="flex py-4 md:py-6">
+                {cart.map((item) => (
+                  <li key={item.id} className="flex py-4 md:py-6">
                     <div className="h-16 w-16 md:h-24 md:w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <img
-                        src={product.thumbnail}
-                        alt={product.imageAlt}
+                        src={item.product.thumbnail}
+                        alt={item.product.imageAlt}
                         className="h-full w-full object-cover object-center"
                       />
                     </div>
@@ -46,25 +53,23 @@ export default function CartDetail() {
                       <div>
                         <div className="flex justify-between text-base md:text-lg font-medium text-gray-900">
                           <h3>
-                            <a href={product.href}>{product.title}</a>
+                            <a href={item.product.href}>{item.product.title}</a>
                           </h3>
-                          <p className="ml-2 md:ml-4">${product.price}</p>
+                          <p className="ml-2 md:ml-4">${item.product.price}</p>
                         </div>
                         <p className="mt-1 text-xs md:text-sm text-gray-500">
-                          {product.color}
+                          {item.product.color}
                         </p>
                       </div>
                       <div className="flex items-center justify-between mt-2 md:mt-4 text-xs md:text-sm text-gray-600">
                         <div className="flex items-center">
                           <p>Qty :</p>
                           <select
-                            onChange={(e) => quantityHandler(e, product)}
+                            onChange={(e) => quantityHandler(e, item)}
                             class="text-xs ml-5 focus:ring-orange-500"
+                            value={item.quantity}
                           >
                             <option value="1">1</option>
-                            <option value={product.quantity} selected>
-                              {product.quantity}
-                            </option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                             <option value="4">4</option>
@@ -74,7 +79,7 @@ export default function CartDetail() {
                         <button
                           type="button"
                           className="font-medium text-orange-400  hover:text-orange-500 "
-                          onClick={(e) => removeItemHandler(e, product)}
+                          onClick={(e) => removeItemHandler(e, item)}
                         >
                           Remove
                         </button>

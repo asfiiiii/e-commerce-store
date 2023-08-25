@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, Navigate } from "react-router-dom";
@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { updateUserAddress } from "../../store/userApi";
 import { createNewOrder } from "../../store/orderApi";
+import { fetchCartbyId } from "../../store/cartApi";
+
 export default function CheckoutDetails() {
   const dispatch = useDispatch();
 
@@ -23,11 +25,16 @@ export default function CheckoutDetails() {
   const showCartHandler = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-  const user = useSelector((state) => state.users.loggedUsers);
+  const user = useSelector((state) => state.user.currentUser);
   const cart = useSelector((state) => state.cart.cart);
   const orderSuccess = useSelector((state) => state.order.currentOrder);
+
+  useEffect(() => {
+    dispatch(fetchCartbyId(user.id));
+  }, [dispatch, user]);
+
   const totalAmount = cart.reduce((amount, currentItem) => {
-    return amount + currentItem.price * currentItem.quantity;
+    return amount + currentItem.product.price * currentItem.quantity;
   }, 0);
   const totalQuantity = cart
     .map((item) => +item.quantity)
@@ -39,7 +46,7 @@ export default function CheckoutDetails() {
     const updatedUser = { ...user, addresses: [...user.addresses, data] };
     console.log(updatedUser);
     dispatch(updateUserAddress(updatedUser));
-    reset();
+    // reset();
   };
 
   const paymentHandler = (e) => {
@@ -54,15 +61,15 @@ export default function CheckoutDetails() {
     e.preventDefault();
     const order = {
       items: [...cart],
-      user,
-      userAddress,
+      user: user.id,
+      selectedAddress: userAddress,
       paymentMethod,
-      status: "pending",
+      status: "Pending",
       totalAmount,
       totalQuantity,
     };
     dispatch(createNewOrder(order));
-    // console.log(order);
+    console.log(order);
   };
   console.log(orderSuccess);
   return (
@@ -473,12 +480,12 @@ export default function CheckoutDetails() {
                 <div className="mx-auto max-w-7xl px-4 sm:px-3 mt-11 lg:px-0">
                   <div className="flow-root">
                     <ul className="-my-4 md:-my-6 divide-y divide-gray-200">
-                      {cart.map((product) => (
-                        <li key={product.id} className="flex py-4 md:py-6">
+                      {cart.map((item) => (
+                        <li key={item.id} className="flex py-4 md:py-6">
                           <div className="h-8 w-8 md:h-20 md:w-20 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                             <img
-                              src={product.thumbnail}
-                              alt={product.imageAlt}
+                              src={item.product.thumbnail}
+                              alt={item.product.imageAlt}
                               className="h-full w-full object-cover object-center"
                             />
                           </div>
@@ -486,16 +493,20 @@ export default function CheckoutDetails() {
                             <div>
                               <div className="flex justify-between text-base md:text-lg font-medium text-gray-900">
                                 <h3>
-                                  <a href={product.href}>{product.title}</a>
+                                  <a href={item.product.href}>
+                                    {item.product.title}
+                                  </a>
                                 </h3>
-                                <p className="ml-2 md:ml-4">${product.price}</p>
+                                <p className="ml-2 md:ml-4">
+                                  ${item.product.price}
+                                </p>
                               </div>
                               <div className="flex justify-between text-base md:text-lg font-medium text-gray-900">
                                 <p className="mt-1 text-xs md:text-sm text-gray-500">
-                                  {product.brand}
+                                  {item.product.brand}
                                 </p>
                                 <div className="flex items-center justify-between mt-2 md:mt-4 text-xs md:text-sm text-gray-600">
-                                  <p>Qty {product.quantity}</p>
+                                  <p>Qty {item.quantity}</p>
                                 </div>
                               </div>
                             </div>
@@ -595,15 +606,12 @@ export default function CheckoutDetails() {
                               <div className="mt-8">
                                 <div className="flow-root">
                                   <ul className="-my-6 divide-y divide-gray-200">
-                                    {cart.map((product) => (
-                                      <li
-                                        key={product.id}
-                                        className="flex py-6"
-                                      >
+                                    {cart.map((item) => (
+                                      <li key={item.id} className="flex py-6">
                                         <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                           <img
-                                            src={product.thumbnail}
-                                            alt={product.title}
+                                            src={item.product.thumbnail}
+                                            alt={item.product.title}
                                             className="h-full w-full object-cover object-center"
                                           />
                                         </div>
@@ -611,18 +619,18 @@ export default function CheckoutDetails() {
                                         <div className="ml-4 flex flex-1 flex-col">
                                           <div>
                                             <div className="flex justify-between text-base font-medium text-gray-900">
-                                              <h3>{product.title}</h3>
+                                              <h3>{item.product.title}</h3>
                                               <p className="ml-4">
-                                                ${product.price}
+                                                ${item.product.price}
                                               </p>
                                             </div>
                                             <p className="mt-1 text-sm text-gray-500">
-                                              {product.brand}
+                                              {item.product.brand}
                                             </p>
                                           </div>
                                           <div className="flex flex-1 items-end justify-between text-sm">
                                             <p className="text-gray-500">
-                                              Qty {product.quantity}
+                                              Qty {item.quantity}
                                             </p>
                                           </div>
                                         </div>

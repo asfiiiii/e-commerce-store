@@ -12,6 +12,57 @@ function Order() {
     dispatch(getUserOrderDetails(user.id));
   }, [dispatch, user]);
 
+  function formatDate(date) {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = date.getHours() % 12 || 12; // Convert to 12-hour format
+    const minutes = date.getMinutes();
+    const period = date.getHours() < 12 ? "AM" : "PM";
+
+    const formattedDate = `${day}${getOrdinalSuffix(
+      day
+    )} ${month} ${year} at ${hours}:${formatMinutes(minutes)} ${period}`;
+    return formattedDate;
+  }
+
+  function getOrdinalSuffix(day) {
+    if (day >= 11 && day <= 13) {
+      return "th";
+    }
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
+
+  function formatMinutes(minutes) {
+    return minutes < 10 ? `0${minutes}` : minutes;
+  }
+
+  console.log(order); // Output: 22nd August 2023 at 11:51 AM
+
   return (
     <>
       {" "}
@@ -27,7 +78,7 @@ function Order() {
                 Order # {orderItem.id}
               </h1>
               <p className="text-base font-medium leading-6 text-gray-600">
-                21st Mart 2021 at 10:34 PM
+                {formatDate(new Date(orderItem.orderDateTime))}
               </p>
             </div>
             <div className="mt-10 flex flex-col xl:flex-row jusitfy-center items-stretch  w-full xl:space-x-8 space-y-4 md:space-y-6 xl:space-y-0">
@@ -41,25 +92,25 @@ function Order() {
                       <div className="pb-4 md:pb-8 w-full md:w-40">
                         <img
                           className="w-full h-full hidden md:block"
-                          src={item.thumbnail}
-                          alt={item.title}
+                          src={item.product.thumbnail}
+                          alt={item.product.title}
                         />
                         <img
                           className="w-full md:hidden"
-                          src={item.thumbnail}
-                          alt={item.title}
+                          src={item.product.thumbnail}
+                          alt={item.product.title}
                         />
                       </div>
                       <div className="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
                         <div className="w-full flex flex-col justify-start items-start space-y-8">
                           <h3 className="text-xl xl:text-2xl font-semibold leading-6 text-gray-800">
-                            {item.title}
+                            {item.product.title}
                           </h3>
                           <div className="flex justify-start items-start flex-col space-y-2">
                             <p className="text-sm leading-none text-gray-800">
                               <span className="text-gray-400">Brand: </span>
                               {"  "}
-                              {item.brand}
+                              {item.product.brand}
                             </p>
                             <p className="text-sm leading-none text-gray-800">
                               <span className="text-gray-400">Size: </span>
@@ -75,7 +126,7 @@ function Order() {
                         </div>
                         <div className="flex justify-between  items-start w-full">
                           <p className="text-base xl:text-lg leading-6">
-                            Price: ${item.price}{" "}
+                            Price: ${item.product.price}{" "}
                             <span className="text-orange-500 line-through">
                               {" "}
                               $1245.00
@@ -85,7 +136,7 @@ function Order() {
                             Qty: 0{item.quantity}
                           </p>
                           <p className="text-base xl:text-lg font-semibold leading-6 text-gray-800">
-                            Total: ${item.quantity * item.price}
+                            Total: ${item.quantity * item.product.price}
                           </p>
                         </div>
                       </div>
@@ -180,10 +231,10 @@ function Order() {
                       />
                       <div className=" flex justify-start items-start flex-col space-y-2">
                         <p className="text-base font-semibold leading-4 text-left text-gray-800">
-                          {orderItem.userAddress.username}
+                          {orderItem.selectedAddress.username}
                         </p>
                         <p className="text-sm leading-5 text-gray-600">
-                          {orderItem.userAddress.phone}
+                          {orderItem.selectedAddress.phone}
                         </p>
                       </div>
                     </div>
@@ -210,7 +261,7 @@ function Order() {
                         />
                       </svg>
                       <p className="cursor-pointer text-sm leading-5 text-gray-800">
-                        {orderItem.userAddress.email}
+                        {orderItem.selectedAddress.email}
                       </p>
                     </div>
                   </div>
@@ -221,9 +272,9 @@ function Order() {
                           Shipping Address
                         </p>
                         <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                          {orderItem.userAddress.street_address},{" "}
-                          {orderItem.userAddress.province},{" "}
-                          {orderItem.userAddress.country}
+                          {orderItem.selectedAddress.street_address},{" "}
+                          {orderItem.selectedAddress.province},{" "}
+                          {orderItem.selectedAddress.country}
                         </p>
                       </div>
                       <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 ">
@@ -231,9 +282,9 @@ function Order() {
                           Billing Address
                         </p>
                         <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                          {orderItem.userAddress.street_address},{" "}
-                          {orderItem.userAddress.province},{" "}
-                          {orderItem.userAddress.country}
+                          {orderItem.selectedAddress.street_address},{" "}
+                          {orderItem.selectedAddress.province},{" "}
+                          {orderItem.selectedAddress.country}
                         </p>
                       </div>
                     </div>

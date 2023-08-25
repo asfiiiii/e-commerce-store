@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchCartbyId } from "./store/cartApi";
 import UserProfile from "./Pages/UserProfile";
-import { getUserDetails } from "./store/orderApi";
+import { getUserDetails } from "./store/userApi";
 import Logout from "./Components/Logout/Logout";
 import Protected from "./Pages/Protected";
 import AdminProducts from "./Components/Products/AdminProducts";

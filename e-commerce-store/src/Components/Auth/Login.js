@@ -2,7 +2,7 @@ import logo from "../../logo.png";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { loginUser } from "../../store/userApi";
+import { loginUser } from "../../store/authApi";
 import { Navigate } from "react-router-dom";
 export default function Login() {
   const dispatch = useDispatch();

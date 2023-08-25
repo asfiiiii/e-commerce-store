@@ -54,6 +54,7 @@ export const updateCartItem = (cartData) => {
     try {
       const updateCart = async (cart) => {
         const id = cart.id;
+        console.log(cart);
         const response = await fetch("http://localhost:8080/cart/" + id, {
           method: "PATCH",
           headers: { "content-type": "application/json" },

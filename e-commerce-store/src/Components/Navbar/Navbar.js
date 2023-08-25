@@ -46,7 +46,7 @@ function classNames(...classes) {
 export default function Navbar(props) {
   const loggedUser = useSelector((state) => state.users.loggedUsers);
   const cart = useSelector((state) => state.cart.cart);
-
+  console.log(cart);
   return (
     <>
       <div className="min-h-full">
@@ -110,6 +110,11 @@ export default function Navbar(props) {
                   <div className="hidden md:block">
                     {loggedUser ? (
                       <div className="ml-4 flex items-center md:ml-6">
+                        {loggedUser && loggedUser.role === "admin" && (
+                          <span className="inline-flex items-center rounded-md bg-red-50 mr-2 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                            Admin
+                          </span>
+                        )}
                         <Link
                           type="button"
                           to={"/cart"}
@@ -117,16 +122,12 @@ export default function Navbar(props) {
                         >
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only">View notifications</span>
+
                           <ShoppingCartIcon
                             className="h-6 w-6"
                             aria-hidden="true"
                           />
                         </Link>
-                        {loggedUser && loggedUser.role === "admin" && (
-                          <span className="inline-flex items-center rounded-md bg-red-50 ml-2 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                            Admin
-                          </span>
-                        )}
                         {cart && cart.length > 0 && (
                           <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
                             {cart && cart.length}

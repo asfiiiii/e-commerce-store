@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const {
   getAllProducts,
   createNewProduct,
@@ -8,7 +9,7 @@ const {
 const router = express.Router();
 
 router
-  .get("/", getAllProducts)
+  .get("/", passport.authenticate("jwt", { session: false }), getAllProducts)
   .post("/", createNewProduct)
   .get("/:id", getProductByid)
   .patch("/:id", updateProductByid);

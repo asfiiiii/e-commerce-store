@@ -72,7 +72,7 @@ export default function Products() {
   const brands = useSelector((state) => state.products.brands);
   const category = useSelector((state) => state.products.category);
   const user = useSelector((state) => state.users.loggedUsers);
-
+  console.log(productsData);
   const filters = [
     {
       id: "brand",
@@ -391,59 +391,60 @@ export default function Products() {
                       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         {productsData.map((product) => (
                           <div key={product.id} className="group relative">
-                            {/* <Link
+                            <Link
                               key={product.id}
                               to={`/admin/editProduct/${product.id}`}
-                            > */}
-                            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                              {" "}
-                              <img
-                                src={product.thumbnail}
-                                alt={product.imageAlt}
-                                className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                              />
-                            </div>
-                            <div className="mt-4 flex flex-col justify-between">
-                              <div className=" flex justify-between">
-                                <div>
-                                  <h3 className="text-sm text-gray-700">
-                                    <div href={product.href}>
-                                      <span
-                                        aria-hidden="true"
-                                        className="absolute inset-0"
-                                      />
-                                      {product.title}
-                                    </div>
-                                  </h3>
-                                  <p className="mt-1 text-sm text-gray-500 flex items-center">
-                                    <StarIcon className="text-yellow-500 w-4 h-4 mr-1" />
+                            >
+                              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
+                                {" "}
+                                <img
+                                  src={product.thumbnail}
+                                  alt={product.imageAlt}
+                                  className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                                />
+                              </div>
 
-                                    <span className="text-500 mr-1">
-                                      {product.rating}
-                                    </span>
+                              <div className="mt-4 flex flex-col justify-between">
+                                <div className=" flex justify-between">
+                                  <div>
+                                    <h3 className="text-sm text-gray-700">
+                                      <div href={product.href}>
+                                        <span
+                                          aria-hidden="true"
+                                          className="absolute inset-0"
+                                        />
+                                        {product.title}
+                                      </div>
+                                    </h3>
+                                    <p className="mt-1 text-sm text-gray-500 flex items-center">
+                                      <StarIcon className="text-yellow-500 w-4 h-4 mr-1" />
+
+                                      <span className="text-500 mr-1">
+                                        {product.rating}
+                                      </span>
+                                    </p>
+                                  </div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    ${product.price}
                                   </p>
                                 </div>
-                                <p className="text-sm font-medium text-gray-900">
-                                  ${product.price}
-                                </p>
                               </div>
-                            </div>
-                            {/* </Link> */}
-
-                            <div className=" flex justify-between mt-5">
-                              <Link
-                                to={`/admin/editProduct/${product.id}`}
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-2 rounded text-xs"
-                              >
-                                Update
-                              </Link>
-                              <button
-                                onClick={deleteProductHandler}
-                                className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs"
-                              >
-                                Delete
-                              </button>
-                            </div>
+                              {/* </Link> */}
+                              <div className=" flex justify-between mt-5">
+                                <Link
+                                  to={`/admin/editProduct/${product.id}`}
+                                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-2 rounded text-xs"
+                                >
+                                  Update
+                                </Link>
+                                <button
+                                  onClick={deleteProductHandler}
+                                  className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs"
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </Link>
                           </div>
                         ))}
                       </div>

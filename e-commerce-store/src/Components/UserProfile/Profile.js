@@ -4,7 +4,7 @@ import { HomeIcon } from "@heroicons/react/20/solid";
 import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-import { updateUserAddress } from "../../store/orderApi";
+import { updateUserAddress } from "../../store/userApi";
 const ProfilePage = () => {
   const [showForm, setShowForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -18,7 +18,7 @@ const ProfilePage = () => {
     formState: { errors },
   } = useForm();
 
-  const user = useSelector((state) => state.order.userInfo);
+  const user = useSelector((state) => state.user.currentUser);
 
   const removeAddressHandler = (e, index) => {
     const newAddress = { ...user, addresses: [...user.addresses] };
@@ -48,14 +48,16 @@ const ProfilePage = () => {
   };
   const onFormSubmit = (data) => {
     const newAddress = { ...user, addresses: [...user.addresses, data] };
-    // console.log(newAddress);
+    console.log(newAddress);
     dispatch(updateUserAddress(newAddress));
     setShowForm((prevState) => !prevState);
     reset();
   };
   const handleEditSubmit = (data) => {
     const newUser = { ...user, addresses: [...user.addresses] };
+
     newUser.addresses.splice(editIndex, 1, data);
+    // console.log(newUser);
     dispatch(updateUserAddress(newUser));
     setShowEditForm((prevState) => !prevState);
     reset();

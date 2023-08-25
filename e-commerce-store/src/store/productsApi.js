@@ -108,7 +108,7 @@ export const fetchSelectedProduct = (id) => {
 export const createNewProduct = (product) => {
   return async (dispatch) => {
     const createProd = async (prodData) => {
-      const response = await fetch("http://localhost:8080/products/", {
+      const response = await fetch("http://localhost:8080/products", {
         method: "POST",
         body: JSON.stringify(prodData),
         headers: { "content-type": "application/json" },

@@ -1,6 +1,6 @@
 import logo from "../../logo.png";
 import { useForm } from "react-hook-form";
-import { createNewUser } from "../../store/userApi";
+import { createNewUser } from "../../store/authApi";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Navigate } from "react-router-dom";

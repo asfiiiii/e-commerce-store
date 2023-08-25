@@ -1,20 +1,20 @@
 import { Fragment, useState } from "react";
 import { useEffect } from "react";
-
+import orderImage from "./empty_order.png";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import {
   fetchAllOrders,
   updateOrderDetails,
   fetchSortedOrderstData,
-  fetchSortedOrdertDataByStatus,
-} from "../../store/orderApi";
+  // fetchSortedOrdertDataByStatus,
+} from "../../store/adminApi";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 const sortOptions = [
-  { name: "Top to Bottom", _sort: "id", _order: "asc", current: false },
-  { name: "Bottom to Top", _sort: "id", _order: "desc", current: false },
+  // { name: "Top to Bottom", _sort: "id", _order: "asc", current: false },
+  // { name: "Bottom to Top", _sort: "id", _order: "desc", current: false },
   {
     name: "SubTotal: Low to High",
     _sort: "totalAmount",
@@ -29,7 +29,7 @@ const sortOptions = [
   },
 ];
 const statusSortOptions = [
-  { name: "Pendind", value: "Pending" },
+  { name: "Pending", value: "Pending" },
   { name: "Placed", value: "Placed" },
   { name: "Dispatched", value: "Dispatched" },
   { name: "Delivered", value: "Delivered" },
@@ -47,8 +47,8 @@ export default function Products() {
   const [filterData, setFilterData] = useState({});
 
   const user = useSelector((state) => state.users.loggedUsers);
-  const orders = useSelector((state) => state.order.orders);
-
+  const orders = useSelector((state) => state.admin.orders);
+  console.log(orders);
   useEffect(() => {
     dispatch(fetchAllOrders());
   }, [dispatch]);
@@ -58,6 +58,7 @@ export default function Products() {
   };
   const updateStatusHandler = (e, order) => {
     const updatedOrder = { ...order, status: e.target.value };
+    console.log(updatedOrder);
     dispatch(updateOrderDetails(updatedOrder));
     setEditOrderId(-1);
   };
@@ -90,9 +91,9 @@ export default function Products() {
   };
   const statusSortHandler = (e, option) => {
     const newFilter = option.value;
-
     console.log(newFilter);
-    dispatch(fetchSortedOrdertDataByStatus(newFilter));
+
+    dispatch(fetchSortedOrderstData({ status: newFilter }));
   };
   return (
     <>
@@ -246,7 +247,7 @@ export default function Products() {
                                 </svg>
                                 {/* <XMarkIcon /> */}
                               </div>
-                              <span className="font-medium">{order.id}</span>
+                              <span className="font-medium">{++index}</span>
                             </div>
                           </td>
                           <td className="py-3 px-2 text-left">
@@ -255,7 +256,7 @@ export default function Products() {
                                 <strong className="mr-2 font-semibold">
                                   Customer Name:
                                 </strong>
-                                <span>{order.userAddress.username}</span>
+                                <span>{order.selectedAddress.username}</span>
                               </div>
                               <div className="flex mb-1  text-md">
                                 <strong className="mr-1 font-semibold">
@@ -269,8 +270,8 @@ export default function Products() {
                                 <div className="mr-5">
                                   <img
                                     className="w-6 h-6 rounded-full"
-                                    alt={item.title}
-                                    src={item.thumbnail}
+                                    alt={item.product.title}
+                                    src={item.product.thumbnail}
                                   />
                                 </div>
                                 <div className="flex justify-between">
@@ -278,7 +279,7 @@ export default function Products() {
                                     className="mr-5"
                                     style={{ flex: "0 0 264px" }}
                                   >
-                                    <span>{item.title}</span>
+                                    <span>{item.product.title}</span>
                                   </div>
                                   <div className="flex">
                                     <strong className="mr-1">Qty: </strong>{" "}
@@ -286,7 +287,7 @@ export default function Products() {
                                   </div>
                                   <div className="flex mx-4">
                                     <strong className="mr-1">Price: </strong> $
-                                    {item.price * item.quantity}
+                                    {item.product.price * item.quantity}
                                   </div>
                                 </div>
                               </div>
@@ -310,9 +311,9 @@ export default function Products() {
                             <div className="flex items-center justify-center">
                               <p>
                                 {" "}
-                                {order.userAddress.city},{" "}
-                                {order.userAddress.postal_code},{" "}
-                                <b> {order.userAddress.country}</b>
+                                {order.selectedAddress.city},{" "}
+                                {order.selectedAddress.postal_code},{" "}
+                                <b> {order.selectedAddress.country}</b>
                               </p>
                             </div>
                           </td>
@@ -398,6 +399,21 @@ export default function Products() {
                       ))}
                   </tbody>
                 </table>
+                <div>
+                  {orders.length === 0 && (
+                    <div className="flex flex-col items-center mt-3 col-span-full">
+                      <img
+                        src={orderImage}
+                        alt="Empty Order"
+                        className="mt-4"
+                        style={{ width: "260px" }}
+                      />
+                      <p className="mt-3 mb-12 text-lg text-center text-gray-600 font-bold">
+                        No Such Orders
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
