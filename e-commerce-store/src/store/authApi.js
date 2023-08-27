@@ -29,7 +29,6 @@ export const loginUser = (userData) => {
         const email = user.email;
         const password = user.password;
         let query = `?email=${email}&password=${password}`;
-        console.log(query);
         const response = await fetch(
           "http://localhost:8080/auth/login" + query
         );
@@ -43,6 +42,7 @@ export const loginUser = (userData) => {
       };
 
       const loggedUser = await loginUser(userData);
+      console.log(loggedUser);
 
       if (loggedUser) {
         // Check if loggedUser is truthy
@@ -56,8 +56,57 @@ export const loginUser = (userData) => {
   };
 };
 
+export const checkUser = () => {
+  return async (dispatch) => {
+    try {
+      const check = async () => {
+        const response = await fetch("http://localhost:8080/auth/check");
+
+        if (!response.ok) {
+          throw new Error("Failed to get User through this data");
+        }
+
+        const data = await response.json();
+        return data; // Instead of checking data.length, simply return the data
+      };
+
+      const loggedUser = await check();
+      if (loggedUser) {
+        // Check if loggedUser is truthy
+        dispatch(authActions.checkUser({ loggedUser }));
+      } else {
+        throw new Error("User Not Found");
+      }
+    } catch (error) {
+      dispatch(authActions.loginUserError({ error: error.message }));
+    }
+  };
+};
+
 export const logoutCurrentUser = () => {
   return async (dispatch) => {
-    dispatch(authActions.logoutUser());
+    const logout = async () => {
+      const response = await fetch("http://localhost:8080/auth/logout");
+
+      if (!response.ok) {
+        throw new Error("Failed to logout");
+      }
+
+      // If the response is OK, the user has successfully logged out
+      return true;
+    };
+
+    try {
+      const loggedOut = await logout();
+      if (loggedOut) {
+        dispatch(authActions.logoutUser());
+      } else {
+        throw new Error("User not logged out");
+      }
+    } catch (error) {
+      // Handle any error that occurred during the logout process
+      console.error(error);
+      // You can dispatch an action to handle the error state in your Redux store if needed
+    }
   };
 };

@@ -24,7 +24,7 @@ const navigation = [
   { name: "Reports", href: "#", current: false },
 ];
 const adminNavigation = [
-  { name: "Dashboard", href: "/", current: true },
+  { name: "Dashboard", href: "/prodDetails", current: true },
   { name: "Products", href: "/admin/products", current: false },
   { name: "Orders", href: "/admin/orderPanel", current: false },
 ];
@@ -33,7 +33,7 @@ const authNavigation = [
   { name: "Signup", to: "/auth/signup", current: false },
 ];
 const userNavigation = [
-  { name: "Your Profile", href: "userProfile" },
+  { name: "Your Profile", href: "/userProfile" },
   { name: "My Orders", href: "/userOrder" },
   { name: "Sign out", href: "/auth/logout" },
   { name: "Admin", href: "/admin/products" },
@@ -44,9 +44,8 @@ function classNames(...classes) {
 }
 
 export default function Navbar(props) {
-  const loggedUser = useSelector((state) => state.users.loggedUsers);
+  const loggedUser = useSelector((state) => state.user.currentUser);
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
   return (
     <>
       <div className="min-h-full">
@@ -65,7 +64,7 @@ export default function Navbar(props) {
                         alt="Your Company"
                       />
                     </div>
-                    <Link to={"/"}>
+                    <Link to={"/prodDetails"}>
                       <h1 className="text-2xl font-bold tracking-tight text-yellow-500">
                         PrimePlus
                       </h1>

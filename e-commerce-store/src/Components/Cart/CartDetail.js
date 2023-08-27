@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCartItem, deleteItemfromCart } from "../../store/cartApi";
@@ -7,11 +7,19 @@ import { fetchCartbyId } from "../../store/cartApi";
 export default function CartDetail() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
-  const user = useSelector((state) => state.users.loggedUsers);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState(null);
+
+  const removeItemHandler = (e, item) => {
+    e.preventDefault();
+    setItemToRemove(item.id);
+    setShowConfirmation(true);
+  };
 
   useEffect(() => {
-    dispatch(fetchCartbyId(user.id));
-  }, [dispatch, user]);
+    dispatch(fetchCartbyId());
+  }, [dispatch]);
   console.log(cart);
   const totalAmount = cart.reduce((amount, currentItem) => {
     return amount + currentItem.product.price * currentItem.quantity;
@@ -24,9 +32,14 @@ export default function CartDetail() {
     e.preventDefault();
     dispatch(updateCartItem({ id: item.id, quantity: e.target.value }));
   };
-  const removeItemHandler = (e, item) => {
-    e.preventDefault();
-    dispatch(deleteItemfromCart(item.id));
+
+  const confirmRemoveHandler = () => {
+    // Perform the actual removal action here
+    // You can update the cart state to remove the item
+    dispatch(deleteItemfromCart(itemToRemove));
+
+    setShowConfirmation(false);
+    setItemToRemove(null);
   };
   return (
     <>
@@ -76,13 +89,16 @@ export default function CartDetail() {
                             <option value="5">5</option>
                           </select>
                         </div>
-                        <button
-                          type="button"
-                          className="font-medium text-orange-400  hover:text-orange-500 "
-                          onClick={(e) => removeItemHandler(e, item)}
-                        >
-                          Remove
-                        </button>
+                        <div key={item.id}>
+                          {/* Cart item display */}
+                          <button
+                            type="button"
+                            className="font-medium text-orange-400 hover:text-orange-500"
+                            onClick={(e) => removeItemHandler(e, item)}
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </li>
@@ -90,6 +106,27 @@ export default function CartDetail() {
               </ul>
             </div>
           </div>
+          {showConfirmation && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded-md">
+                <p>Are you sure you want to remove this item from the cart?</p>
+                <div className="mt-4 flex justify-between">
+                  <button
+                    onClick={() => setShowConfirmation(false)}
+                    className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-1 px-2 rounded text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmRemoveHandler}
+                    className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs"
+                  >
+                    Confirm Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="mx-auto  mt-20 md:mt-10 max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between text-base md:text-lg font-medium text-gray-900">
               <p>Total Items:</p>

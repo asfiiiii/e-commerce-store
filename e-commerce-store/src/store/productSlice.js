@@ -31,6 +31,12 @@ const productSlice = createSlice({
       );
       state.products[index] = action.payload.product;
     },
+    deleteProduct(state, action) {
+      const index = state.products.findIndex(
+        (product) => product.id === action.payload.product.id
+      );
+      state.products[index] = action.payload.product;
+    },
   },
 });
 

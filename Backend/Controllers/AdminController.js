@@ -19,7 +19,6 @@ exports.getAllOrders = async (req, res) => {
 
 exports.updateOrder = async (req, res) => {
   const { id } = req.params; // Assuming the query parameter is named "userId"
-  console.log(id);
   try {
     const order = await Order.findByIdAndUpdate(id, req.body, { new: true });
 

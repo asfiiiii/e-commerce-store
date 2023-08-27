@@ -27,10 +27,10 @@ export const addItemtoCart = (cartData) => {
   };
 };
 
-export const fetchCartbyId = (id) => {
+export const fetchCartbyId = () => {
   return async (dispatch) => {
-    const fetchCart = async (id) => {
-      const response = await fetch("http://localhost:8080/cart?user=" + id);
+    const fetchCart = async () => {
+      const response = await fetch("http://localhost:8080/cart");
 
       if (!response.ok) {
         return;
@@ -40,7 +40,7 @@ export const fetchCartbyId = (id) => {
     };
 
     try {
-      const cart = await fetchCart(id);
+      const cart = await fetchCart();
       dispatch(cartActions.showCartItems({ items: cart }));
       return cart;
     } catch (err) {

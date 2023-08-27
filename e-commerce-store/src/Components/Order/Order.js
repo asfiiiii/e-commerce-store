@@ -9,8 +9,8 @@ function Order() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUserOrderDetails(user.id));
-  }, [dispatch, user]);
+    dispatch(getUserOrderDetails());
+  }, [dispatch]);
 
   function formatDate(date) {
     const months = [

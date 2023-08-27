@@ -28,12 +28,12 @@ export const createNewOrder = (orderData) => {
   };
 };
 
-export const getUserOrderDetails = (id) => {
+export const getUserOrderDetails = () => {
   //done
   return async (dispatch) => {
     try {
-      const orderDetials = async (id) => {
-        const response = await fetch("http://localhost:8080/orders?user=" + id);
+      const orderDetials = async () => {
+        const response = await fetch("http://localhost:8080/orders");
 
         if (!response.ok) {
           throw new Error("Failed to add items to cart");
@@ -43,7 +43,7 @@ export const getUserOrderDetails = (id) => {
         return data;
       };
 
-      const details = await orderDetials(id);
+      const details = await orderDetials();
 
       dispatch(orderActions.getUserOrder({ order: details }));
     } catch (error) {

@@ -10,7 +10,7 @@ function Logout() {
     dispatch(logoutCurrentUser());
   }, [dispatch]);
 
-  return <>{!user && <Navigate replace={true} to="/" />}</>;
+  return <>{!user && <Navigate replace={true} to="/auth/login" />}</>;
 }
 
 export default Logout;

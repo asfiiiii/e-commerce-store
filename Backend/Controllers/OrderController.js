@@ -14,9 +14,9 @@ exports.createNewOrder = async (req, res) => {
 };
 
 exports.fetchOrderById = async (req, res) => {
-  const { user } = req.query; // Assuming the query parameter is named "userId"
+  const { _id } = req.user; // Assuming the query parameter is named "userId"
   try {
-    const order = await Order.find({ user: user }).populate("user");
+    const order = await Order.find({ user: _id }).populate("user");
 
     if (!order) {
       res.status(404).json({ message: "order not found" });

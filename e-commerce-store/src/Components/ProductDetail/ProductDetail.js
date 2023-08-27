@@ -80,13 +80,15 @@ export default function Example() {
   const selectedProduct = useSelector(
     (state) => state.products.selectedProduct
   );
+
   const loggedUser = useSelector((state) => state.users.loggedUsers);
+  const currentUser = useSelector((state) => state.user.currentUser);
   const submitCartHandler = (e) => {
     e.preventDefault();
     const newItem = {
       product: selectedProduct.id,
       quantity: 1,
-      user: loggedUser.id,
+      user: currentUser.id,
     };
     dispatch(addItemtoCart(newItem));
     setIsItemAdded(true);

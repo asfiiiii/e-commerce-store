@@ -1,10 +1,10 @@
 import { userActions } from "./userSlice";
-export const getUserDetails = (id) => {
+export const getUserDetails = () => {
   //done
   return async (dispatch) => {
     try {
-      const userDetails = async (id) => {
-        const response = await fetch("http://localhost:8080/user/" + id);
+      const userDetails = async () => {
+        const response = await fetch("http://localhost:8080/user/:id");
 
         if (!response.ok) {
           throw new Error("Failed to fetch user details");
@@ -14,7 +14,7 @@ export const getUserDetails = (id) => {
         return data;
       };
 
-      const details = await userDetails(id);
+      const details = await userDetails();
 
       dispatch(userActions.getUserDetails({ info: details }));
     } catch (error) {

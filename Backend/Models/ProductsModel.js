@@ -46,6 +46,11 @@ const productSchema = new Schema({
     type: [String],
     required: true,
   },
+  isDeleted: {
+    type: Boolean,
+    enum: [true, false],
+    default: false, // Default value can be true or false depending on your use case
+  },
 });
 
 const virtual = productSchema.virtual("id");

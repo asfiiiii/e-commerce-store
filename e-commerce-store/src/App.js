@@ -21,7 +21,8 @@ import AdminProducts from "./Components/Products/AdminProducts";
 import AdminOrderPanel from "./Components/Order/AdminOrderPanel";
 import AddProduct from "./Components/Products/AddProduct";
 import EditProduct from "./Components/Products/EditProduct";
-
+import StripePayment from "./Pages/Stripe_payment";
+import { checkUser } from "./store/authApi";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
     element: <OrderSuccess />,
   },
   {
+    path: "/card_payment/:id",
+    element: <StripePayment />,
+  },
+  {
     path: "/userOrder",
     element: <UserOrder />,
   },
@@ -120,14 +125,20 @@ const router = createBrowserRouter([
 function App() {
   const dispatch = useDispatch();
   const loggedUser = useSelector((state) => state.users.loggedUsers);
+  const userChecked = useSelector((state) => state.users.checkedUsers);
+
+  useEffect(() => {
+    dispatch(checkUser());
+  }, [dispatch]);
 
   useEffect(() => {
     if (loggedUser) {
-      dispatch(fetchCartbyId(loggedUser.id));
-      dispatch(getUserDetails(loggedUser.id));
+      dispatch(fetchCartbyId());
+      dispatch(getUserDetails());
     }
   }, [dispatch, loggedUser]);
-  return <RouterProvider router={router} />;
+
+  return <>{userChecked && <RouterProvider router={router} />};</>;
 }
 
 export default App;

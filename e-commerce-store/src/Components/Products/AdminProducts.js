@@ -3,6 +3,7 @@ import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon, StarIcon } from "@heroicons/react/24/outline";
 import Pagination from "../Pagination";
 import { useEffect } from "react";
+import { deleteProduct } from "../../store/productsApi";
 import {
   fetchFilteredProductstData,
   fetchProductstData,
@@ -42,6 +43,15 @@ function classNames(...classes) {
 }
 
 export default function Products() {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
+  const deleteProductHandler = (productId) => {
+    // Set the product to be deleted and show the confirmation overlay
+    setProductToDelete(productId);
+    setShowConfirmation(true);
+  };
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchProductstData());
@@ -71,8 +81,7 @@ export default function Products() {
   const productsData = useSelector((state) => state.products.products);
   const brands = useSelector((state) => state.products.brands);
   const category = useSelector((state) => state.products.category);
-  const user = useSelector((state) => state.users.loggedUsers);
-  console.log(productsData);
+  const user = useSelector((state) => state.user.currentUser);
   const filters = [
     {
       id: "brand",
@@ -86,13 +95,19 @@ export default function Products() {
     },
   ];
 
-  const deleteProductHandler = () => {
-    console.log("hehe");
+  const confirmDeleteHandler = () => {
+    // Perform the actual delete action here
+    // You can call an API to delete the product or update the isDeleted flag
+    console.log(productToDelete);
+    dispatch(deleteProduct(productToDelete));
+    // After deletion, hide the confirmation overlay
+    setShowConfirmation(false);
+    setProductToDelete(null);
   };
   return (
     <>
       {" "}
-      {!user && !user.role === "admin" && <Navigate to="/" />}
+      {user && user.role !== "admin" && <Navigate to="/" />}
       <div className="bg-white">
         <div>
           {/* Mobile filter dialog */}
@@ -390,64 +405,83 @@ export default function Products() {
 
                       <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
                         {productsData.map((product) => (
-                          <div key={product.id} className="group relative">
-                            <Link
-                              key={product.id}
-                              to={`/admin/editProduct/${product.id}`}
-                            >
-                              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                                {" "}
-                                <img
-                                  src={product.thumbnail}
-                                  alt={product.imageAlt}
-                                  className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                                />
-                              </div>
-
-                              <div className="mt-4 flex flex-col justify-between">
-                                <div className=" flex justify-between">
-                                  <div>
-                                    <h3 className="text-sm text-gray-700">
-                                      <div href={product.href}>
-                                        <span
-                                          aria-hidden="true"
-                                          className="absolute inset-0"
-                                        />
-                                        {product.title}
-                                      </div>
-                                    </h3>
-                                    <p className="mt-1 text-sm text-gray-500 flex items-center">
-                                      <StarIcon className="text-yellow-500 w-4 h-4 mr-1" />
-
-                                      <span className="text-500 mr-1">
-                                        {product.rating}
-                                      </span>
-                                    </p>
-                                  </div>
-                                  <p className="text-sm font-medium text-gray-900">
-                                    ${product.price}
-                                  </p>
+                          <div
+                            key={product.id}
+                            className="bg-white p-4 shadow-md rounded-lg relative"
+                          >
+                            {/* Product Thumbnail */}
+                            <div className="mb-2">
+                              <img
+                                src={product.thumbnail}
+                                alt={product.imageAlt}
+                                className="w-full h-32 object-cover object-center rounded-md"
+                              />
+                            </div>
+                            <h3 className="text-lg font-semibold text-gray-800">
+                              {product.title}
+                            </h3>
+                            <p className="mt-2 text-gray-600">
+                              ${product.price}
+                            </p>
+                            <div className="flex items-center mt-2">
+                              <span className="text-yellow-500">
+                                {/* You can adjust the number of stars based on the rating */}
+                                ★★★★☆
+                              </span>
+                              <span className="ml-1 text-gray-500">
+                                ({product.rating})
+                              </span>
+                            </div>
+                            {product.isDeleted ? (
+                              <p className="mt-5 text-sm text-red-700 font-semibold">
+                                Product has been removed
+                              </p>
+                            ) : (
+                              <div className="absolute bottom-0 left-0 w-full flex justify-between bg-white py-2 px-4">
+                                <div className="w-1/2">
+                                  <Link
+                                    to={`/admin/editProduct/${product.id}`}
+                                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-2 rounded text-xs w-full text-center"
+                                  >
+                                    Update
+                                  </Link>
+                                </div>
+                                <div className="w-1/2">
+                                  <button
+                                    onClick={(e) =>
+                                      deleteProductHandler(product.id)
+                                    }
+                                    className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs w-full text-center"
+                                  >
+                                    Delete
+                                  </button>
                                 </div>
                               </div>
-                              {/* </Link> */}
-                              <div className=" flex justify-between mt-5">
-                                <Link
-                                  to={`/admin/editProduct/${product.id}`}
-                                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1 px-2 rounded text-xs"
-                                >
-                                  Update
-                                </Link>
-                                <button
-                                  onClick={deleteProductHandler}
-                                  className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </Link>
+                            )}
                           </div>
                         ))}
                       </div>
+                      {showConfirmation && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                          <div className="bg-white p-6 rounded-md">
+                            <p>Are you sure you want to delete this product?</p>
+                            <div className="mt-4 flex justify-between">
+                              <button
+                                onClick={() => setShowConfirmation(false)}
+                                className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-1 px-2 rounded text-xs"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={confirmDeleteHandler}
+                                className="bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold py-1 px-2 rounded text-xs"
+                              >
+                                Confirm Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -12,11 +12,7 @@ exports.updateUser = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
   try {
-    let { id } = req.params;
-    id = id.trim();
-    id = id.replace(/\n/g, ""); // Remove newline characters
-    console.log(id);
-    const user = await User.findOne({ _id: id });
+    const user = await User.findOne({ _id: req.user._id });
     if (!user) {
       res.status(404).json({ message: "User not found" });
     } else {

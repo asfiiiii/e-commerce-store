@@ -1,5 +1,5 @@
 const express = require("express");
-
+const passport = require("passport");
 const router = express.Router();
 const {
   getAllOrders,
@@ -8,8 +8,20 @@ const {
 } = require("../Controllers/AdminController");
 
 router
-  .get("/orders", getAllOrders)
-  .patch("/orders/:id", updateOrder)
-  .get("/orders/sort", getSortedOrderData);
+  .get(
+    "/orders",
+    passport.authenticate("jwt", { session: false }),
+    getAllOrders
+  )
+  .patch(
+    "/orders/:id",
+    passport.authenticate("jwt", { session: false }),
+    updateOrder
+  )
+  .get(
+    "/orders/sort",
+    passport.authenticate("jwt", { session: false }),
+    getSortedOrderData
+  );
 
 module.exports = router;

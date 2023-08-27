@@ -1,10 +1,21 @@
 const passport = require("passport");
 const User = require("../Models/UserModel");
+require("dotenv").config;
 const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 const opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = "secret";
+var cookieExtractor = function (req) {
+  var token = null;
+  if (req && req.cookies) {
+    token = req.cookies["jwt"];
+  }
+  token =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFzZmFyIiwicGFzc3dvcmQiOiIkMmEkMTAkRkhsSGIxQ0cxa0lRVHAyVFNkTlVxT3p3MWJsY3BtN01yQWRTYkgxSjlad21HTDlGSUhPZ1ciLCJlbWFpbCI6ImFzZmFybWEyODE1QGdtYWlsLmNvbSIsImlhdCI6MTY5MzE2Mjg3MCwiZXhwIjoxNjkzMjQ5MjcwfQ.veGzkoN9R83CBEPstWSk2vO1IQnN7QFsug2gDTn33Rc";
+  return token;
+};
+// opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = cookieExtractor;
+opts.secretOrKey = process.env.JWT_PASSWORD;
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {

@@ -64,3 +64,21 @@ exports.updateProductByid = async (req, res) => {
       .json({ message: "Error Updating specific product", error: err.message });
   }
 };
+
+exports.deleteProduct = async (req, res) => {
+  try {
+    const deleteProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true },
+      { new: true }
+    );
+    if (!deleteProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    res.status(200).json(deleteProduct); // Respond with the fetched products
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Error Deleting specific product", error: err.message });
+  }
+};

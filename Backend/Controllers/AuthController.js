@@ -1,5 +1,6 @@
 const User = require("../Models//UserModel");
 //
+require("dotenv").config;
 
 const { hashSync, compare } = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -17,13 +18,18 @@ exports.signUpUser = async (req, res) => {
         password: newUser.password,
         email: newUser.email,
       };
-      const token = jwt.sign(payload, "secret", {
+      const token = jwt.sign(payload, process.env.JWT_PASSWORD, {
         expiresIn: "1d",
       });
       await newUser.save();
 
       // res.status(200).json(newUser);
       res
+        .cookie("jwt", token, {
+          httpOnly: true,
+          maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+          secure: process.env.NODE_ENV === "production", // Use secure cookie in production
+        })
         // .send({
         //   msg: "Successfully Created!",
         //   data: {
@@ -31,7 +37,7 @@ exports.signUpUser = async (req, res) => {
         //     token: token,
         //   },
         // })
-        .json(newUser);
+        .json(token);
     }
   } catch (err) {
     res
@@ -50,6 +56,7 @@ exports.loginUser = async (req, res) => {
     // } else {
     //   res.status(401).json({ message: "Invalid email or password" });
     // }
+
     if (user) {
       const isLoggedin = await compare(req.query.password, user.password);
       if (isLoggedin) {
@@ -58,19 +65,17 @@ exports.loginUser = async (req, res) => {
           password: user.password,
           email: user.email,
         };
-        const token = jwt.sign(payload, "secret", {
+        const token = jwt.sign(payload, process.env.JWT_PASSWORD, {
           expiresIn: "1d",
         });
         return res
-          .status(200)
-          .send({
-            msg: "Successfully Logged In",
-            data: {
-              token: token,
-              user: { username: user.username, _id: user._id },
-            },
+          .cookie("jwt", token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
+            secure: process.env.NODE_ENV === "production", // Use secure cookie in production
           })
-          .json(user);
+          .status(200)
+          .json(token);
       } else {
         res.status(401).json({ message: "Invalid email or password" });
       }
@@ -82,10 +87,21 @@ exports.loginUser = async (req, res) => {
   }
 };
 
+exports.checkUser = async (req, res) => {
+  try {
+    if (req.user) {
+      res.json(req.user);
+    }
+  } catch (err) {
+    res.status(401).json({ message: "User Not Found", error: err.message });
+  }
+};
+
 exports.logoutUser = async (req, res) => {
-  // Clear the token cookie
   res
-    .clearCookie("token")
-    .status(200)
-    .json({ message: "Logged out successfully" });
+    .cookie("jwt", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    })
+    .sendStatus(200);
 };

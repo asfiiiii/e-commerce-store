@@ -151,7 +151,32 @@ export const updateProductData = (prodData) => {
 
       const prod = await updateProduct(prodData);
 
-      dispatch(productActions.updateProduct({ product: prod }));
+      dispatch(productActions.deleteProduct({ product: prod }));
+    } catch (error) {
+      return;
+    }
+  };
+};
+
+export const deleteProduct = (prodData) => {
+  return async (dispatch) => {
+    try {
+      const deleteProduct = async (id) => {
+        const response = await fetch(
+          "http://localhost:8080/products/delete/" + id
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to delete Product");
+        }
+
+        const data = await response.json();
+        return data;
+      };
+
+      const prod = await deleteProduct(prodData);
+
+      dispatch(productActions.deleteProduct({ product: prod }));
     } catch (error) {
       return;
     }

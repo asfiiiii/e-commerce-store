@@ -7,7 +7,7 @@ import { resetCartAfterOrder } from "../store/cartApi";
 function OrderSuccess() {
   const params = useParams();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.users.loggedUsers);
+  const user = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
     dispatch(resetCartAfterOrder(user.id));

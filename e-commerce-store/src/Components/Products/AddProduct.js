@@ -5,7 +5,7 @@ import { Navigate } from "react-router-dom";
 import { createNewProduct } from "../../store/productsApi";
 function AddProduct() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.users.loggedUsers);
+  const user = useSelector((state) => state.user.currentUser);
 
   const {
     register,
