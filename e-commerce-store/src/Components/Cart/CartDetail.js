@@ -7,6 +7,7 @@ import { fetchCartbyId } from "../../store/cartApi";
 export default function CartDetail() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
+  const cartLoaded = useSelector((state) => state.cart.cartLoaded);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
@@ -20,7 +21,6 @@ export default function CartDetail() {
   useEffect(() => {
     dispatch(fetchCartbyId());
   }, [dispatch]);
-  console.log(cart);
   const totalAmount = cart.reduce((amount, currentItem) => {
     return amount + currentItem.product.price * currentItem.quantity;
   }, 0);
@@ -44,8 +44,8 @@ export default function CartDetail() {
   return (
     <>
       {" "}
-      {!cart && <Navigate to="/" />}
-      {cart && (
+      {!cart && cartLoaded && <Navigate to="/" />}
+      {cartLoaded && cart && (
         <div className="mx-4 md:mx-8 lg:mx-60 mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
           <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 md:mb-10">
             Your Cart

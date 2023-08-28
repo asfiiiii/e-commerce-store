@@ -138,7 +138,7 @@ function App() {
     }
   }, [dispatch, loggedUser]);
 
-  return <>{userChecked && <RouterProvider router={router} />};</>;
+  return <>{userChecked && <RouterProvider router={router} />}</>;
 }
 
 export default App;

@@ -75,7 +75,7 @@ export const fetchSortedOrderstData = (queryData) => {
 //   return async (dispatch) => {
 //     const fetchData = async (status) => {
 //       const responce = await fetch(
-//         "http://localhost:8080/orders?status=" + status
+//         "/orders?status=" + status
 //       );
 //       if (!responce.ok) {
 //         // throw new Error("Error in fetching");

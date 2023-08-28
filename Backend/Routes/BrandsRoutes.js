@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router
-  .get("/", passport.authenticate("jwt", { session: false }), getAllBrands)
+  .get("/", getAllBrands)
   .post("/", passport.authenticate("jwt", { session: false }), createNewBrand);
 
 module.exports = router;

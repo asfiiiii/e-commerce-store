@@ -36,7 +36,6 @@ const userNavigation = [
   { name: "Your Profile", href: "/userProfile" },
   { name: "My Orders", href: "/userOrder" },
   { name: "Sign out", href: "/auth/logout" },
-  { name: "Admin", href: "/admin/products" },
 ];
 
 function classNames(...classes) {

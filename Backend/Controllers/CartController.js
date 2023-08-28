@@ -16,7 +16,6 @@ exports.createNewCart = async (req, res) => {
 exports.fetchCartById = async (req, res) => {
   // const { user } = req.query; // Assuming the query parameter is named "userId"
   try {
-    console.log(req.user._id);
     const cart = await Cart.find({ user: req.user._id })
       .populate("user")
       .populate("product");

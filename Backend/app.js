@@ -12,10 +12,11 @@ const UserRoutes = require("./Routes/UserRoutes");
 const CartRoutes = require("./Routes/CartRoutes");
 const OrderRoutes = require("./Routes/OrderRoutes");
 const AdminRoutes = require("./Routes/AdminRoutes");
+const path = require("path");
 const cors = require("cors");
 
 const app = express();
-app.use(express.static("build", { maxAge: 0 }));
+app.use(express.static(path.resolve(__dirname, "build")));
 
 app.use(cookieParser());
 // passport
@@ -41,7 +42,7 @@ const stripe = require("stripe")(
 
 // app.use(express.static("public"));
 
-app.post("/create-payment-intent", async (req, res) => {
+app.post("http://localhost:8080/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
@@ -68,6 +69,9 @@ app.use("/cart", CartRoutes);
 app.use("/user", UserRoutes);
 app.use("/orders", OrderRoutes);
 app.use("/admin", AdminRoutes);
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}`);

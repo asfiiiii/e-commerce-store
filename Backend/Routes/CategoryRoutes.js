@@ -8,7 +8,7 @@ const {
 const router = express.Router();
 
 router
-  .get("/", passport.authenticate("jwt", { session: false }), getCategories)
+  .get("/", getCategories)
   .post(
     "/",
     passport.authenticate("jwt", { session: false }),

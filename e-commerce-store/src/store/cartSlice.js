@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   cart: [],
   totalItems: 0,
+  cartLoaded: false,
 };
 const cartSlice = createSlice({
   name: "cart",
@@ -13,6 +14,7 @@ const cartSlice = createSlice({
     },
     showCartItems(state, action) {
       state.cart = action.payload.items;
+      state.cartLoaded = true;
     },
     updateCartItem(state, action) {
       const index = state.cart.findIndex(

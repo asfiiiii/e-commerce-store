@@ -37,7 +37,7 @@ exports.signUpUser = async (req, res) => {
         //     token: token,
         //   },
         // })
-        .json(token);
+        .json(newUser);
     }
   } catch (err) {
     res
@@ -75,7 +75,7 @@ exports.loginUser = async (req, res) => {
             secure: process.env.NODE_ENV === "production", // Use secure cookie in production
           })
           .status(200)
-          .json(token);
+          .json(user);
       } else {
         res.status(401).json({ message: "Invalid email or password" });
       }

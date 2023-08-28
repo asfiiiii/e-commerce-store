@@ -44,7 +44,7 @@ export const fetchCartbyId = () => {
       dispatch(cartActions.showCartItems({ items: cart }));
       return cart;
     } catch (err) {
-      return;
+      dispatch(cartActions.showCartItems({ items: null }));
     }
   };
 };

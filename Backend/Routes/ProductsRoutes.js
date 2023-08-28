@@ -10,9 +10,9 @@ const {
 const router = express.Router();
 
 router
-  .get("/", passport.authenticate("jwt", { session: false }), getAllProducts)
+  .get("/", getAllProducts)
   .post("/", passport.authenticate("jwt", { session: false }), createNewProduct)
-  .get("/:id", passport.authenticate("jwt", { session: false }), getProductByid)
+  .get("/:id", getProductByid)
   .get(
     "/delete/:id",
     passport.authenticate("jwt", { session: false }),

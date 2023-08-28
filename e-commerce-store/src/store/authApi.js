@@ -78,7 +78,7 @@ export const checkUser = () => {
         throw new Error("User Not Found");
       }
     } catch (error) {
-      dispatch(authActions.loginUserError({ error: error.message }));
+      dispatch(authActions.checkUser({ loggedUser: null }));
     }
   };
 };
