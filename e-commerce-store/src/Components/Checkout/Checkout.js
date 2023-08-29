@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
@@ -12,6 +12,7 @@ export default function CheckoutDetails() {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
+  const [addAddress, setAddAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [userAddress, setUserAddress] = useState(null);
   const {
@@ -33,9 +34,17 @@ export default function CheckoutDetails() {
     dispatch(fetchCartbyId());
   }, [dispatch, user]);
 
-  const totalAmount = cart.reduce((amount, currentItem) => {
-    return amount + currentItem.product.price * currentItem.quantity;
+  // Assuming `cart` is your cart array with each item containing `product` and `quantity`
+  const estimatetotalAmount = cart.reduce((amount, currentItem) => {
+    const discountedPrice =
+      currentItem.product.price -
+      currentItem.product.price *
+        (currentItem.product.discountPercentage / 100);
+    return amount + discountedPrice * currentItem.quantity;
   }, 0);
+
+  const totalAmount = Math.floor(estimatetotalAmount);
+
   const totalQuantity = cart
     .map((item) => +item.quantity)
     .reduce((total, quantity) => total + quantity, 0);
@@ -54,7 +63,10 @@ export default function CheckoutDetails() {
   };
   const addressHandler = (e) => {
     setUserAddress(user.addresses[e.target.value]);
-    console.log(userAddress);
+  };
+
+  const addAddressHandler = () => {
+    setAddAddress((addrss) => !addrss);
   };
 
   const orderHandler = (e) => {
@@ -69,9 +81,7 @@ export default function CheckoutDetails() {
       totalQuantity,
     };
     dispatch(createNewOrder(order));
-    console.log(order);
   };
-  console.log(orderSuccess);
   return (
     <>
       {orderSuccess && orderSuccess.paymentMethod === "cash" && (
@@ -80,234 +90,31 @@ export default function CheckoutDetails() {
       {orderSuccess && orderSuccess.paymentMethod === "card" && (
         <Navigate to={`/card_payment/${orderSuccess.id}`} />
       )}
+      {!cart.length && <Navigate to="/prodDetails" />}
+
       {user && (
         <div className="mx-auto w-4/5 lg:w-4/5">
-          <div className="fixed top-4 right-5 transition-opacity opacity-100 lg:hidden">
+          <div className="fixed top-4 right-1 transition-opacity opacity-100 lg:hidden">
             <button
-              className="bg-orange-500 text-white px-4 py-2 rounded"
+              className="bg-orange-500 text-white px-4 py-2 rounded-full flex items-center"
               onClick={showCartHandler}
             >
-              Show Cart
+              <ShoppingCartIcon className="w-5 h-5 " />
             </button>
           </div>
 
           {/* <div className=" gap-x-8 gap-y-10 "> */}
-          <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5 ">
-            <div className="lg:col-span-3  my-2 lg:my-5">
-              <div className=" bg-white px-5 lg:px-10 py-4 lg:py-6 my-4 lg:my-5">
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <div className="space-y-12">
-                    <div className="border-b border-gray-900/10 pb-12">
-                      <h4 className="text-2xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-6">
-                        Add new address
-                      </h4>
-                      <p className="mt-1 text-sm leading-6 text-gray-600">
-                        Use a permanent address where you can receive mail.
-                      </p>
-
-                      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="first-name"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Name
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              id="name"
-                              {...register("username", {
-                                required: "Username Required",
-                              })}
-                              autoComplete="given-name"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                          {errors.username && (
-                            <p className="text-red-500 mt-1 text-xs">
-                              {errors.username.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="phone"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Phone Number
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="tel"
-                              {...register("phone", {
-                                required: "Phone number Required",
-                              })}
-                              id="phone"
-                              autoComplete="family-name"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                          {errors.phone && (
-                            <p className="text-red-500 mt-1 text-xs">
-                              {errors.phone.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="sm:col-span-4">
-                          <label
-                            htmlFor="email"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Email address
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              id="email"
-                              {...register("email", {
-                                required: "Email Required",
-
-                                pattern: {
-                                  value:
-                                    /([\w-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/g,
-                                  message: "Valid Email is required",
-                                },
-                              })}
-                              type="email"
-                              autoComplete="email"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                          {errors.email && (
-                            <p className="text-red-500 mt-1 text-xs">
-                              {errors.email.message}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="sm:col-span-3">
-                          <label
-                            htmlFor="country"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Country
-                          </label>
-                          <div className="mt-2">
-                            <select
-                              id="country"
-                              {...register("country")}
-                              autoComplete="country-name"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                            >
-                              <option value="Pakistan">Pakistan</option>
-                              <option value="United States">
-                                United States
-                              </option>
-                              <option value="Canada">Canada</option>
-                              <option value="Mexico">Mexico</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="col-span-full">
-                          <label
-                            htmlFor="street-address"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Street address
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              {...register("street_address")}
-                              id="street-address"
-                              autoComplete="street-address"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-2 sm:col-start-1">
-                          <label
-                            htmlFor="city"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            City
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              {...register("city")}
-                              id="city"
-                              autoComplete="address-level2"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-2">
-                          <label
-                            htmlFor="province"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            State / Province
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              {...register("province")}
-                              id="province"
-                              autoComplete="address-level1"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="sm:col-span-2">
-                          <label
-                            htmlFor="postal-code"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            ZIP / Postal code
-                          </label>
-                          <div className="mt-2">
-                            <input
-                              type="text"
-                              {...register("postal_code")}
-                              id="postal-code"
-                              autoComplete="postal-code"
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex items-center justify-end gap-x-6">
-                    {/* <button
-                type="button"
-                className="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Cancel
-              </button> */}
-                    <button
-                      type="submit"
-                      className="rounded-md bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div className=" bg-white p-6 lg:p-10 my-4 lg:my-3">
+          <div className="grid  grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5 ">
+            <div className=" lg:col-span-3 mt-5 my-2 lg:my-5">
+              <div className="p-3 rounded-md bg-white lg:p-10 my-4 lg:my-3">
                 <form onSubmit={orderHandler}>
                   <div className="space-y-12">
-                    <h5 className="text-2xl md:text-2xl lg:text-1xl font-bold mb-6 md:mb-10">
+                    <h5 className="text-2xl md:text-2xl lg:text-1xl font-bold mb-2 md:mb-10">
                       Checkout Form
                     </h5>
+                    <p className="text-sm text-gray-500 ">
+                      Please select/Add the address for shipment
+                    </p>
 
                     <ul className="divide-y divide-gray-100 border px-5 border-solid border-gray-100">
                       {user.addresses &&
@@ -321,6 +128,7 @@ export default function CheckoutDetails() {
                                 id={addrs.postal_code}
                                 name="adress"
                                 type="radio"
+                                required
                                 onChange={addressHandler}
                                 value={index}
                                 className="h-4 w-4 my-auto mr-2 border-gray-300 text-orange-600 focus:ring-orange-600"
@@ -348,6 +156,15 @@ export default function CheckoutDetails() {
                           </li>
                         ))}
                     </ul>
+                    {!addAddress && (
+                      <button
+                        type="button"
+                        onClick={addAddressHandler}
+                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                      >
+                        Add New Address
+                      </button>
+                    )}
                     <div className="border-b border-gray-900/10 pb-12">
                       <h2 className="text-base font-semibold leading-7 text-gray-900">
                         Payment Method
@@ -358,6 +175,7 @@ export default function CheckoutDetails() {
 
                       <div className="mt-2 space-y-10">
                         <fieldset>
+                          {/* payment method */}
                           <div className="mt-6 space-y-6">
                             <div className="relative flex gap-x-3">
                               <div className="flex h-6 items-center">
@@ -403,58 +221,6 @@ export default function CheckoutDetails() {
                             </div>
                           </div>
                         </fieldset>
-                        {/* <fieldset>
-                      <legend className="text-sm font-semibold leading-6 text-gray-900">
-                        Push Notifications
-                      </legend>
-                      <p className="mt-1 text-sm leading-6 text-gray-600">
-                        These are delivered via SMS to your mobile phone.
-                      </p>
-                      <div className="mt-6 space-y-6">
-                        <div className="flex items-center gap-x-3">
-                          <input
-                            id="push-everything"
-                            name="push-notifications"
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-orange-600 focus:ring-orange-600"
-                          />
-                          <label
-                            htmlFor="push-everything"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Everything
-                          </label>
-                        </div>
-                        <div className="flex items-center gap-x-3">
-                          <input
-                            id="push-email"
-                            name="push-notifications"
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-orange-600 focus:ring-orange-600"
-                          />
-                          <label
-                            htmlFor="push-email"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Same as email
-                          </label>
-                        </div>
-                        <div className="flex items-center gap-x-3">
-                          <input
-                            id="push-nothing"
-                            name="push-notifications"
-                            type="radio"
-                            className="h-4 w-4 border-gray-300 text-orange-600 focus:ring-orange-600"
-                          />
-                          <label
-                            htmlFor="push-nothing"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            No push notifications
-                          </label>
-                        </div>
-                      </div>
-                    </fieldset> */}
                       </div>
                     </div>
                   </div>
@@ -466,15 +232,241 @@ export default function CheckoutDetails() {
                     >
                       Cancel
                     </button>
-                    <button
-                      type="submit"
-                      className="rounded-md bg-orange-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
-                    >
-                      Place Order
-                    </button>
+                    {user.addresses && (
+                      <button
+                        type="submit"
+                        className={`rounded-md  mr-8 md:mr-0 px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                          user.addresses.length === 0
+                            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                            : "bg-orange-600 text-white hover:bg-orange-500 focus-visible:outline-orange-600"
+                        }`}
+                        disabled={user.addresses.length === 0}
+                      >
+                        Place Order
+                      </button>
+                    )}
                   </div>
                 </form>
               </div>
+
+              {addAddress && (
+                <div className="   rounded-md  mt-10 lg:px-10 py-4 lg:py-6 my-4 lg:my-5">
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="space-y-12">
+                      <div className="border-b border-gray-900/10 pb-12">
+                        <h4 className="text-2xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-6">
+                          Add new address
+                        </h4>
+                        <p className="mt-1 text-sm leading-6 text-gray-600">
+                          Use a permanent address where you can receive mail.
+                        </p>
+
+                        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                          <div className="sm:col-span-3">
+                            <label
+                              htmlFor="first-name"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Name
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                id="name"
+                                {...register("username", {
+                                  required: "Username Required",
+                                })}
+                                autoComplete="given-name"
+                                className="block w-full sm:w-40 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            {errors.username && (
+                              <p className="text-red-500 mt-1 text-xs">
+                                {errors.username.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="sm:col-span-3">
+                            <label
+                              htmlFor="phone"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Phone Number
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="tel"
+                                {...register("phone", {
+                                  required: "Phone number Required",
+                                })}
+                                id="phone"
+                                autoComplete="family-name"
+                                className="block w-full   rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            {errors.phone && (
+                              <p className="text-red-500 mt-1 text-xs">
+                                {errors.phone.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="sm:col-span-4">
+                            <label
+                              htmlFor="email"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Email address
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                id="email"
+                                {...register("email", {
+                                  required: "Email Required",
+
+                                  pattern: {
+                                    value:
+                                      /([\w-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/g,
+                                    message: "Valid Email is required",
+                                  },
+                                })}
+                                type="email"
+                                autoComplete="email"
+                                className="block w-full   rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                            {errors.email && (
+                              <p className="text-red-500 mt-1 text-xs">
+                                {errors.email.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="sm:col-span-3">
+                            <label
+                              htmlFor="country"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Country
+                            </label>
+                            <div className="mt-2">
+                              <select
+                                id="country"
+                                {...register("country")}
+                                autoComplete="country-name"
+                                className="block w-full   rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                              >
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="United States">
+                                  United States
+                                </option>
+                                <option value="Canada">Canada</option>
+                                <option value="Mexico">Mexico</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="col-span-full">
+                            <label
+                              htmlFor="street-address"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              Street address
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                {...register("street_address")}
+                                id="street-address"
+                                autoComplete="street-address"
+                                className="block w-full  rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="sm:col-span-2 sm:col-start-1 ">
+                            <label
+                              htmlFor="city"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              City
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                {...register("city")}
+                                id="city"
+                                autoComplete="address-level2"
+                                className="block w-full   rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label
+                              htmlFor="province"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              State / Province
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                {...register("province")}
+                                id="province"
+                                autoComplete="address-level1"
+                                className="block w-full  rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label
+                              htmlFor="postal-code"
+                              className="block text-sm font-medium leading-6 text-gray-900"
+                            >
+                              ZIP / Postal code
+                            </label>
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                {...register("postal_code")}
+                                id="postal-code"
+                                autoComplete="postal-code"
+                                className="block w-full   rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-orange-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-end gap-x-6">
+                      {/* <button
+                type="button"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Cancel
+              </button> */}
+
+                      <button
+                        type="button"
+                        onClick={addAddressHandler}
+                        className="rounded-md bg-gray-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="rounded-md bg-orange-600 mr-8 md:mr-0 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+                      >
+                        Add Address
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
 
             {/* media queires */}
@@ -504,8 +496,13 @@ export default function CheckoutDetails() {
                                       {item.product.title}
                                     </a>
                                   </h3>
-                                  <p className="ml-2 md:ml-4">
-                                    ${item.product.price}
+                                  <p className="">
+                                    $
+                                    {(
+                                      item.product.price -
+                                      item.product.price *
+                                        (item.product.discountPercentage / 100)
+                                    ).toFixed(0)}
                                   </p>
                                 </div>
                                 <div className="flex justify-between text-base md:text-lg font-medium text-gray-900">
@@ -533,7 +530,8 @@ export default function CheckoutDetails() {
                       <p>${totalAmount}</p>
                     </div>
                     <p className="mt-1 text-xs md:text-sm text-gray-500">
-                      Shipping and taxes calculated at checkout.
+                      This Subtotal is generated after adding all Shipping and
+                      tax charges.
                     </p>
                     <div className="mt-4 md:mt-6">
                       <Link
@@ -660,7 +658,8 @@ export default function CheckoutDetails() {
                                   <p>${totalAmount}</p>
                                 </div>
                                 <p className="mt-2 text-sm text-gray-500">
-                                  Shipping and taxes calculated at checkout.
+                                  This Subtotal is generated after adding all
+                                  Shipping and tax charges
                                 </p>
                                 <div className="mt-6">
                                   <Link

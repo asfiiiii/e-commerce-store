@@ -18,19 +18,22 @@ export const fetchProductstData = () => {
     }
   };
 };
-export const fetchFilteredProductstData = (queryData) => {
+export const fetchFilteredProductstData = (newFilter, pagination) => {
   return async (dispatch) => {
     let query = "";
-    for (let key in queryData) {
-      query += `${key}=${queryData[key]}&`;
+    for (let key in newFilter) {
+      query += `${key}=${newFilter[key]}&`;
+    }
+    for (let key in pagination) {
+      query += `${key}=${pagination[key]}&`;
     }
     const fetchData = async () => {
       console.log(query);
-      const responce = await fetch("http://localhost:8080/products?" + query);
-      if (!responce.ok) {
+      const response = await fetch("http://localhost:8080/products?" + query);
+      if (!response.ok) {
         // throw new Error("Error in fetching");
       }
-      const data = await responce.json();
+      const data = await response.json();
 
       return data;
     };

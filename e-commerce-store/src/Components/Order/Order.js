@@ -61,8 +61,6 @@ function Order() {
     return minutes < 10 ? `0${minutes}` : minutes;
   }
 
-  console.log(order); // Output: 22nd August 2023 at 11:51 AM
-
   return (
     <>
       {" "}
@@ -74,8 +72,9 @@ function Order() {
             className="py-14 px-4 md:px-6 2xl:px-20 2xl:container 2xl:mx-auto"
           >
             <div className="flex justify-start item-start space-y-2 flex-col ">
-              <h1 className="text-3xl lg:text-4xl font-semibold leading-7 lg:leading-9  text-gray-800">
-                Order # {orderItem.id}
+              <h1 className="text-2xl lg:text-3xl font-semibold leading-7 lg:leading-9  text-gray-800">
+                <span className=" text-orange-400"> Order # </span>
+                {orderItem.id}
               </h1>
               <p className="text-base font-medium leading-6 text-gray-600">
                 {formatDate(new Date(orderItem.orderDateTime))}
@@ -87,61 +86,68 @@ function Order() {
                   <p className="text-lg md:text-xl font-semibold leading-6 xl:leading-5 text-gray-800">
                     Customer’s Cart
                   </p>
-                  {orderItem.items.map((item, index) => (
-                    <div className="mt-4 md:mt-6 flex  flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full ">
-                      <div className="pb-4 md:pb-8 w-full md:w-40">
-                        <img
-                          className="w-full h-full hidden md:block"
-                          src={item.product.thumbnail}
-                          alt={item.product.title}
-                        />
-                        <img
-                          className="w-full md:hidden"
-                          src={item.product.thumbnail}
-                          alt={item.product.title}
-                        />
-                      </div>
-                      <div className="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
-                        <div className="w-full flex flex-col justify-start items-start space-y-8">
-                          <h3 className="text-xl xl:text-2xl font-semibold leading-6 text-gray-800">
-                            {item.product.title}
-                          </h3>
-                          <div className="flex justify-start items-start flex-col space-y-2">
-                            <p className="text-sm leading-none text-gray-800">
-                              <span className="text-gray-400">Brand: </span>
-                              {"  "}
-                              {item.product.brand}
+                  {orderItem &&
+                    orderItem.items.map((item, index) => (
+                      <div className="mt-4 md:mt-6 flex  flex-col md:flex-row justify-start items-start md:items-center md:space-x-6 xl:space-x-8 w-full ">
+                        <div className="pb-4 md:pb-8 w-full md:w-40">
+                          <img
+                            className="w-full h-full hidden md:block"
+                            src={item.product.thumbnail}
+                            alt={item.product.title}
+                          />
+                          <img
+                            className="w-full md:hidden"
+                            src={item.product.thumbnail}
+                            alt={item.product.title}
+                          />
+                        </div>
+                        <div className="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full  pb-8 space-y-4 md:space-y-0">
+                          <div className="w-full flex flex-col justify-start items-start space-y-8">
+                            <h3 className="text-xl xl:text-2xl font-semibold leading-6 text-gray-800">
+                              {item.product.title}
+                            </h3>
+                            <div className="flex justify-start items-start flex-col space-y-2">
+                              <p className="text-sm leading-none text-gray-800">
+                                <span className="text-gray-400">Brand: </span>
+                                {"  "}
+                                {item.product.brand}
+                              </p>
+                              <p className="text-sm leading-none text-gray-800">
+                                <span className="text-gray-400">Size: </span>
+                                {"  "}
+                                Small
+                              </p>
+                              <p className="text-sm leading-none text-gray-800">
+                                <span className="text-gray-400">Color: </span>
+                                {"  "}
+                                Light Blue
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex justify-between  items-start w-full">
+                            <p className="text-base mr-2 xl:text-lg leading-6">
+                              Price: $
+                              {(
+                                item.product.price -
+                                (item.product.discountPercentage *
+                                  item.product.price) /
+                                  100
+                              ).toFixed(0)}{" "}
+                              <span className="text-orange-500 line-through">
+                                {" "}
+                                ${item.product.price}
+                              </span>
                             </p>
-                            <p className="text-sm leading-none text-gray-800">
-                              <span className="text-gray-400">Size: </span>
-                              {"  "}
-                              Small
+                            <p className="text-base xl:text-lg leading-6 text-gray-800">
+                              Qty: 0{item.quantity}
                             </p>
-                            <p className="text-sm leading-none text-gray-800">
-                              <span className="text-gray-400">Color: </span>
-                              {"  "}
-                              Light Blue
+                            <p className="text-base xl:text-lg font-semibold leading-6 text-gray-800">
+                              Total: ${item.quantity * item.product.price}
                             </p>
                           </div>
                         </div>
-                        <div className="flex justify-between  items-start w-full">
-                          <p className="text-base xl:text-lg leading-6">
-                            Price: ${item.product.price}{" "}
-                            <span className="text-orange-500 line-through">
-                              {" "}
-                              $1245.00
-                            </span>
-                          </p>
-                          <p className="text-base xl:text-lg leading-6 text-gray-800">
-                            Qty: 0{item.quantity}
-                          </p>
-                          <p className="text-base xl:text-lg font-semibold leading-6 text-gray-800">
-                            Total: ${item.quantity * item.product.price}
-                          </p>
-                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
                 <div className="flex justify-center md:flex-row flex-col items-stretch w-full space-y-4 md:space-y-0 md:space-x-6 xl:space-x-8">
                   <div className="flex flex-col px-4 py-6 md:p-6 xl:p-8 w-full bg-gray-50 space-y-6   ">
@@ -218,79 +224,81 @@ function Order() {
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 w-full xl:w-96 flex justify-between items-center md:items-start px-4 py-6 md:p-6 xl:p-8 flex-col ">
-                <h3 className="text-xl font-semibold leading-5 text-gray-800">
-                  Customer Details
-                </h3>
-                <div className="flex  flex-col md:flex-row xl:flex-col justify-start items-stretch h-full w-full md:space-x-6 lg:space-x-8 xl:space-x-0 ">
-                  <div className="flex flex-col justify-start items-start flex-shrink-0">
-                    <div className="flex justify-center  w-full  md:justify-start items-center space-x-4 py-8 border-b border-gray-200">
-                      <img
-                        src="https://i.ibb.co/5TSg7f6/Rectangle-18.png"
-                        alt="avatar"
-                      />
-                      <div className=" flex justify-start items-start flex-col space-y-2">
-                        <p className="text-base font-semibold leading-4 text-left text-gray-800">
-                          {orderItem.selectedAddress.username}
-                        </p>
-                        <p className="text-sm leading-5 text-gray-600">
-                          {orderItem.selectedAddress.phone}
-                        </p>
+              {orderItem.selectedAddress && (
+                <div className="bg-gray-50 w-full xl:w-96 flex justify-between items-center md:items-start px-4 py-6 md:p-6 xl:p-8 flex-col ">
+                  <h3 className="text-xl font-semibold leading-5 text-gray-800">
+                    Customer Details
+                  </h3>
+                  <div className="flex  flex-col md:flex-row xl:flex-col justify-start items-stretch h-full w-full md:space-x-6 lg:space-x-8 xl:space-x-0 ">
+                    <div className="flex flex-col justify-start items-start flex-shrink-0">
+                      <div className="flex justify-center  w-full  md:justify-start items-center space-x-4 py-8 border-b border-gray-200">
+                        <img
+                          src="https://i.ibb.co/5TSg7f6/Rectangle-18.png"
+                          alt="avatar"
+                        />
+                        <div className=" flex justify-start items-start flex-col space-y-2">
+                          <p className="text-base font-semibold leading-4 text-left text-gray-800">
+                            {orderItem.selectedAddress.username}
+                          </p>
+                          <p className="text-sm leading-5 text-gray-600">
+                            {orderItem.selectedAddress.phone}
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex justify-center  md:justify-start items-center space-x-4 py-4 border-b border-gray-200 w-full">
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5Z"
-                          stroke="#1F2937"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M3 7L12 13L21 7"
-                          stroke="#1F2937"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <p className="cursor-pointer text-sm leading-5 text-gray-800">
-                        {orderItem.selectedAddress.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between xl:h-full  items-stretch w-full flex-col mt-6 md:mt-0">
-                    <div className="flex justify-center md:justify-start xl:flex-col flex-col md:space-x-6 lg:space-x-8 xl:space-x-0 space-y-4 xl:space-y-12 md:space-y-0 md:flex-row  items-center md:items-start ">
-                      <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 xl:mt-8">
-                        <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">
-                          Shipping Address
-                        </p>
-                        <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                          {orderItem.selectedAddress.street_address},{" "}
-                          {orderItem.selectedAddress.province},{" "}
-                          {orderItem.selectedAddress.country}
+                      <div className="flex justify-center  md:justify-start items-center space-x-4 py-4 border-b border-gray-200 w-full">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5Z"
+                            stroke="#1F2937"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3 7L12 13L21 7"
+                            stroke="#1F2937"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <p className="cursor-pointer text-sm leading-5 text-gray-800">
+                          {orderItem.selectedAddress.email}
                         </p>
                       </div>
-                      <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 ">
-                        <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">
-                          Billing Address
-                        </p>
-                        <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
-                          {orderItem.selectedAddress.street_address},{" "}
-                          {orderItem.selectedAddress.province},{" "}
-                          {orderItem.selectedAddress.country}
-                        </p>
+                    </div>
+                    <div className="flex justify-between xl:h-full  items-stretch w-full flex-col mt-6 md:mt-0">
+                      <div className="flex justify-center md:justify-start xl:flex-col flex-col md:space-x-6 lg:space-x-8 xl:space-x-0 space-y-4 xl:space-y-12 md:space-y-0 md:flex-row  items-center md:items-start ">
+                        <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 xl:mt-8">
+                          <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">
+                            Shipping Address
+                          </p>
+                          <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
+                            {orderItem.selectedAddress.street_address},{" "}
+                            {orderItem.selectedAddress.province},{" "}
+                            {orderItem.selectedAddress.country}
+                          </p>
+                        </div>
+                        <div className="flex justify-center md:justify-start  items-center md:items-start flex-col space-y-4 ">
+                          <p className="text-base font-semibold leading-4 text-center md:text-left text-gray-800">
+                            Billing Address
+                          </p>
+                          <p className="w-48 lg:w-full xl:w-48 text-center md:text-left text-sm leading-5 text-gray-600">
+                            {orderItem.selectedAddress.street_address},{" "}
+                            {orderItem.selectedAddress.province},{" "}
+                            {orderItem.selectedAddress.country}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         ))}

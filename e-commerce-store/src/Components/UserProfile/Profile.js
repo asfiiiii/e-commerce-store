@@ -10,6 +10,7 @@ const ProfilePage = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editIndex, setEditIndex] = useState(-1);
   const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -64,6 +65,16 @@ const ProfilePage = () => {
     reset();
   };
 
+  const [overlayIndex, setOverlayIndex] = useState(null);
+
+  const openOverlay = (index) => {
+    setOverlayIndex(index);
+  };
+
+  const closeOverlay = () => {
+    setOverlayIndex(null);
+  };
+
   return (
     <>
       {user && (
@@ -80,7 +91,7 @@ const ProfilePage = () => {
             <dl className="divide-y divide-gray-100">
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt className="text-sm font-semibold leading-6 text-gray-900">
-                  Full name
+                  Full name:
                 </dt>
                 <dd className="mt-1 capitalize text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                   {user.username}
@@ -88,7 +99,7 @@ const ProfilePage = () => {
               </div>
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt className="text-sm font-semibold leading-6 text-gray-900">
-                  Email Address
+                  Email Address:
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                   {user.email}
@@ -97,14 +108,15 @@ const ProfilePage = () => {
               {/* Additional fields go here */}
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt className="text-sm font-medium leading-6 text-gray-900">
-                  Saved Addresses
+                  Saved Addresses:
                 </dt>
                 <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                   <ul className="">
                     {user.addresses.map((u, index) => (
                       <li
                         key={index}
-                        className="flex items-center justify-between divide-y divide-gray-100 rounded-md border border-gray-200 py-4 pl-4 pr-5 text-sm leading-6"
+                        className="flex items-center cursor-pointer justify-between divide-y divide-gray-100 rounded-md border border-gray-200 py-4 pl-4 pr-5 text-sm leading-6"
+                        onClick={() => openOverlay(index)} // Attach click event listener
                       >
                         <div className="flex w-0 flex-1 items-center">
                           <HomeIcon
@@ -157,6 +169,48 @@ const ProfilePage = () => {
                         >
                           Add Address
                         </button>
+                      </div>
+                    )}
+                    {overlayIndex !== null && (
+                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-4 rounded-md max-w-md w-full mx-5">
+                          <h2 className="text-lg font-semibold mb-4">
+                            Address Details
+                          </h2>
+                          <div className="grid grid-cols-1 gap-2">
+                            <div className="flex  gap-1">
+                              <span className="font-semibold">
+                                Street Address:
+                              </span>
+                              <span>
+                                {user.addresses[overlayIndex].street_address}
+                              </span>
+                            </div>
+                            <div className="flex  gap-1">
+                              <span className="font-semibold">City:</span>
+                              <span>{user.addresses[overlayIndex].city}</span>
+                            </div>
+                            <div className="flex gap-1">
+                              <span className="font-semibold">Province:</span>
+                              <span>
+                                {user.addresses[overlayIndex].province}
+                              </span>
+                            </div>
+                            <div className="flex  gap-1">
+                              <span className="font-semibold">Country:</span>
+                              <span>
+                                {user.addresses[overlayIndex].country}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Close button */}
+                          <button
+                            onClick={closeOverlay}
+                            className="mt-4 bg-gray-200 px-2 py-1 rounded-md text-sm"
+                          >
+                            Close
+                          </button>
+                        </div>
                       </div>
                     )}
                   </ul>

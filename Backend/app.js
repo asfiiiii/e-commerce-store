@@ -42,7 +42,7 @@ const stripe = require("stripe")(
 
 // app.use(express.static("public"));
 
-app.post("http://localhost:8080/create-payment-intent", async (req, res) => {
+app.post("/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
 
   // Create a PaymentIntent with the order amount and currency

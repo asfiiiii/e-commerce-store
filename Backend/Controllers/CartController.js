@@ -2,14 +2,24 @@ const Cart = require("../Models/CartModel");
 
 exports.createNewCart = async (req, res) => {
   try {
-    const newCart = new Cart(req.body);
-    await newCart.save();
+    const existingCartItem = await Cart.findOne({ product: req.body.product });
 
-    res.status(200).json(newCart);
+    if (existingCartItem) {
+      existingCartItem.quantity++; // Increment the quantity
+
+      await existingCartItem.save(); // Save the updated cart item
+
+      res.status(200).json(existingCartItem); // Respond with the updated cart item
+    } else {
+      const newCart = new Cart(req.body);
+      await newCart.save();
+
+      res.status(200).json(newCart); // Respond with the newly created cart item
+    }
   } catch (err) {
     res
       .status(400)
-      .json({ message: "Error Creating new Cart", error: err.message });
+      .json({ message: "Error creating new Cart Item", error: err.message });
   }
 };
 

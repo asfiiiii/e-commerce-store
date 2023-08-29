@@ -1,9 +1,33 @@
 const Product = require("../Models/ProductsModel");
 
+// exports.getAllProducts = async (req, res) => {
+//   try {
+//     let query = Product.find({});
+//     console.log(req.user);
+//     if (req.query._sort && req.query._order) {
+//       query = query.sort({ [req.query._sort]: req.query._order });
+//     }
+//     if (req.query.category) {
+//       query = query.find({ category: req.query.category });
+//     }
+//     if (req.query.brand) {
+//       query = query.find({ brand: req.query.brand });
+//     }
+//     const data = await query.exec();
+
+//     res.status(200).json(data); // Respond with the fetched products
+//   } catch (err) {
+//     res
+//       .status(400)
+//       .json({ message: "Error Fetching products", error: err.message });
+//   }
+// };
+
 exports.getAllProducts = async (req, res) => {
   try {
     let query = Product.find({});
     console.log(req.user);
+
     if (req.query._sort && req.query._order) {
       query = query.sort({ [req.query._sort]: req.query._order });
     }
@@ -13,7 +37,13 @@ exports.getAllProducts = async (req, res) => {
     if (req.query.brand) {
       query = query.find({ brand: req.query.brand });
     }
-    const data = await query.exec();
+
+    // Pagination handling
+    const page = parseInt(req.query._page) || 1;
+    const itemsPerPage = parseInt(req.query._item);
+    const skip = (page - 1) * itemsPerPage;
+
+    const data = await query.skip(skip).limit(itemsPerPage).exec();
 
     res.status(200).json(data); // Respond with the fetched products
   } catch (err) {

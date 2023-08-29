@@ -3,7 +3,7 @@ import { cartActions } from "./cartSlice";
 export const addItemtoCart = (cartData) => {
   return async (dispatch) => {
     try {
-      const fetchData = async (cart) => {
+      const addCart = async (cart) => {
         const response = await fetch("http://localhost:8080/cart", {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -18,7 +18,7 @@ export const addItemtoCart = (cartData) => {
         return data;
       };
 
-      const cart = await fetchData(cartData);
+      const cart = await addCart(cartData);
 
       dispatch(cartActions.addItemtoCart({ items: cart }));
     } catch (error) {

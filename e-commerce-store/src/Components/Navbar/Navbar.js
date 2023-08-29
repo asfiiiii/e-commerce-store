@@ -17,15 +17,14 @@ const user = {
 };
 
 const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
+  { name: "Home", href: "/prodDetails", current: true },
+  { name: "Seasonal", href: "#", current: false },
+  { name: "Vouchers", href: "#", current: false },
   { name: "Calendar", href: "#", current: false },
-  { name: "Reports", href: "#", current: false },
 ];
 const adminNavigation = [
-  { name: "Dashboard", href: "/prodDetails", current: true },
-  { name: "Products", href: "/admin/products", current: false },
+  { name: "Products", href: "/prodDetails", current: true },
+  { name: "Dashboard", href: "/admin/products", current: false },
   { name: "Orders", href: "/admin/orderPanel", current: false },
 ];
 const authNavigation = [
@@ -64,7 +63,7 @@ export default function Navbar(props) {
                       />
                     </div>
                     <Link to={"/prodDetails"}>
-                      <h1 className="text-2xl font-bold tracking-tight text-yellow-500">
+                      <h1 className="text-2xl font-bold tracking-tight text-orange-400">
                         PrimePlus
                       </h1>
                     </Link>
@@ -255,44 +254,50 @@ export default function Navbar(props) {
                 </div>
                 {loggedUser ? (
                   <div className="border-t border-gray-700 pb-3 pt-4">
-                    <div className="flex items-center px-5">
-                      <div className="flex-shrink-0">
-                        <img
-                          className="h-10 w-10 rounded-full"
-                          src={user.imageUrl}
-                          alt=""
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <div className="text-base font-medium leading-none text-white">
-                          {user.name}
+                    <div className="flex justify-between items-center px-5">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <img
+                            className="h-10 w-10 rounded-full"
+                            src={user.imageUrl}
+                            alt=""
+                          />
                         </div>
-                        <div className="text-sm font-medium leading-none text-gray-400">
-                          {user.email}
+                        <div className="ml-3">
+                          <div className="text-base font-medium leading-none text-white">
+                            {loggedUser.username}
+                          </div>
+                          <div className="text-sm font-medium leading-none text-gray-400">
+                            {loggedUser.email}
+                          </div>
                         </div>
                       </div>
-                      <Link
-                        type="button"
-                        to={"/cart"}
-                        className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                      >
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only">View notifications</span>
-                        <ShoppingCartIcon
-                          className="h-6 w-6"
-                          aria-hidden="true"
-                        />
-                      </Link>
-                      {loggedUser && loggedUser.role === "admin" && (
-                        <span className="inline-flex items-center rounded-md bg-red-50 ml-2 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-                          Admin
-                        </span>
-                      )}
-                      {cart && cart.length > 0 && (
-                        <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-                          {cart && cart.length}
-                        </span>
-                      )}
+                      <div className="flex items-center">
+                        {loggedUser && loggedUser.role === "admin" && (
+                          <span className="inline-flex items-center  rounded-md bg-red-50 ml-4 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                            Admin
+                          </span>
+                        )}
+                        <Link
+                          type="button"
+                          to={"/cart"}
+                          className="relative  flex-shrink-0 rounded-full bg-gray-800 ml-1 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                        >
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only">View notifications</span>
+
+                          <ShoppingCartIcon
+                            className="h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        </Link>
+
+                        {cart && cart.length > 0 && (
+                          <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 mb-6 -ml-2 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                            {cart && cart.length}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="mt-3 space-y-1 px-2">
                       {userNavigation.map((item) => (
