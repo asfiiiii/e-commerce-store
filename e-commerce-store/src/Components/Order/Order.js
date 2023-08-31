@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserOrderDetails } from "../../store/orderApi";
 import { Navigate } from "react-router-dom";
-
+import noOrder from "./noOrder.png";
 function Order() {
   const user = useSelector((state) => state.users.loggedUsers);
   const order = useSelector((state) => state.order.orders);
@@ -65,6 +65,22 @@ function Order() {
     <>
       {" "}
       {!user && <Navigate to="/auth/login" />}
+      {!order.length && (
+        <div className="flex flex-col justify-center items-center h-screen">
+          {!order.length && (
+            <div className="text-center">
+              <img
+                src={noOrder}
+                alt="No Orders"
+                className="max-w-66 h-auto md:max-w-48 md:h-48 lg:max-w-56 lg:h-56"
+              />
+              <p className="text-orange-400 font-serif text-2xl mt-4 font-semibold">
+                No orders
+              </p>
+            </div>
+          )}
+        </div>
+      )}
       {order &&
         order.map((orderItem, index) => (
           <div

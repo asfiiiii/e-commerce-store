@@ -23,6 +23,15 @@ import AddProduct from "./Components/Products/AddProduct";
 import EditProduct from "./Components/Products/EditProduct";
 import StripePayment from "./Pages/Stripe_payment";
 import { checkUser } from "./store/authApi";
+
+import { positions, Provider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
+
+const options = {
+  timeout: 3000,
+  position: positions.BOTTOM_CENTER,
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -138,7 +147,15 @@ function App() {
     }
   }, [dispatch, loggedUser]);
 
-  return <>{userChecked && <RouterProvider router={router} />}</>;
+  return (
+    <>
+      {userChecked && (
+        <Provider template={AlertTemplate} {...options}>
+          <RouterProvider router={router} />
+        </Provider>
+      )}
+    </>
+  );
 }
 
 export default App;

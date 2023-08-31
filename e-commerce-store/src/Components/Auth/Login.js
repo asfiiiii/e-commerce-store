@@ -3,7 +3,9 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { loginUser } from "../../store/authApi";
+import { useAlert } from "react-alert";
 import { Navigate } from "react-router-dom";
+
 export default function Login() {
   const dispatch = useDispatch();
   const {
@@ -13,9 +15,17 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
+  const alert = useAlert();
   const user = useSelector((state) => state.users.loggedUsers);
   const error = useSelector((state) => state.users.errors);
   console.log(error);
+
+  const onSubmit = (data) => {
+    console.log(data);
+    alert.success(" Welcome back");
+
+    dispatch(loginUser(data));
+  };
   return (
     <>
       {user && !error && <Navigate to="/" />}
@@ -31,7 +41,7 @@ export default function Login() {
           <form
             className="space-y-6"
             action="#"
-            onSubmit={handleSubmit((data) => dispatch(loginUser(data)))}
+            onSubmit={handleSubmit(onSubmit)}
             noValidate
           >
             <div>
@@ -96,7 +106,7 @@ export default function Login() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-orange-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
               >
                 Log in
               </button>

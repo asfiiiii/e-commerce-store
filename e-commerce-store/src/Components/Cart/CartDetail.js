@@ -3,8 +3,9 @@ import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCartItem, deleteItemfromCart } from "../../store/cartApi";
 import { fetchCartbyId } from "../../store/cartApi";
-
+import { useAlert } from "react-alert";
 import emptycart from "./emptycart.png";
+
 export default function CartDetail() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
@@ -30,7 +31,7 @@ export default function CartDetail() {
     return amount + discountedPrice * currentItem.quantity;
   }, 0);
 
-  const totalAmount = Math.floor(estimatetotalAmount) + 1;
+  const totalAmount = Math.floor(estimatetotalAmount);
 
   const totalQuantity = cart
     .map((item) => +item.quantity)
@@ -40,20 +41,21 @@ export default function CartDetail() {
     e.preventDefault();
     dispatch(updateCartItem({ id: item.id, quantity: e.target.value }));
   };
+  const alert = useAlert();
 
   const confirmRemoveHandler = () => {
     // Perform the actual removal action here
     // You can update the cart state to remove the item
     dispatch(deleteItemfromCart(itemToRemove));
-
+    alert.info(" Item removed!");
     setShowConfirmation(false);
     setItemToRemove(null);
   };
   return (
     <>
       {" "}
-      {!cart.length && cartLoaded && <Navigate to="/" />}
-      {cartLoaded && cart.length && (
+      {!cart && cartLoaded && <Navigate to="/prodDetails" />}
+      {cartLoaded && cart && (
         <div className="mx-4 md:mx-8 lg:mx-60 mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
           {cart.length !== 0 && (
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-8 md:mb-10">

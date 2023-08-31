@@ -57,7 +57,7 @@ export default function Navbar(props) {
                       {" "}
                       <img
                         className="h-11 w-13 mb-2"
-                        // src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        // src="https://tailwindui.com/img/logos/mark.svg?color=orange&shade=500"
                         src={logo}
                         alt="Your Company"
                       />
@@ -264,7 +264,7 @@ export default function Navbar(props) {
                           />
                         </div>
                         <div className="ml-3">
-                          <div className="text-base font-medium leading-none text-white">
+                          <div className="text-base font-medium mb-1 leading-none text-white">
                             {loggedUser.username}
                           </div>
                           <div className="text-sm font-medium leading-none text-gray-400">

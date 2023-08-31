@@ -208,7 +208,7 @@ export default function Products() {
                                         defaultValue={option.value}
                                         type="checkbox"
                                         defaultChecked={option.checked}
-                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                       />
                                       <label
                                         htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
@@ -362,7 +362,7 @@ export default function Products() {
                                       inputHandler(e, section, option)
                                     }
                                     defaultChecked={option.checked}
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                                   />
                                   <label
                                     htmlFor={`filter-${section.id}-${optionIdx}`}

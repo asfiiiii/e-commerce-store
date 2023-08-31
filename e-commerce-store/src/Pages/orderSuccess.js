@@ -36,7 +36,7 @@ function OrderSuccess() {
           </Link>
         </div>
       </div>
-      <Confetti gravity={0.09} initialVelocityY={3} /> {/* Add Confetti */}
+      <Confetti gravity={0.1} initialVelocityY={3} /> {/* Add Confetti */}
     </main>
   );
 }

@@ -7,6 +7,8 @@ import { useParams } from "react-router-dom";
 import { Navigate } from "react-router-dom";
 import { addItemtoCart } from "../../store/cartApi";
 import { Link } from "react-router-dom";
+import { useAlert } from "react-alert";
+
 const product = {
   name: "Basic Tee 6-Pack",
   price: "$192",
@@ -59,7 +61,6 @@ const product = {
   details:
     'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
 };
-const reviews = { href: "#", average: 4, totalCount: 117 };
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -67,6 +68,7 @@ function classNames(...classes) {
 
 export default function Example() {
   const dispatch = useDispatch();
+  const alert = useAlert();
 
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
@@ -90,9 +92,9 @@ export default function Example() {
       quantity: 1,
       user: currentUser.id,
     };
-    console.log(newItem);
     dispatch(addItemtoCart(newItem));
     setIsItemAdded(true);
+    alert.success(" Item added to cart!");
   };
   return (
     <>

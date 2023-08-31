@@ -34,7 +34,7 @@ export const loginUser = (userData) => {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to Login through this data");
+          throw new Error("Invalid email or password");
         }
 
         const data = await response.json();
@@ -42,7 +42,6 @@ export const loginUser = (userData) => {
       };
 
       const loggedUser = await loginUser(userData);
-      console.log(loggedUser);
 
       if (loggedUser) {
         // Check if loggedUser is truthy

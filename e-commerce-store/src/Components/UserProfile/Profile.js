@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { HomeIcon } from "@heroicons/react/20/solid";
-import { Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { useAlert } from "react-alert";
 
 import { updateUserAddress } from "../../store/userApi";
 const ProfilePage = () => {
@@ -10,6 +10,7 @@ const ProfilePage = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editIndex, setEditIndex] = useState(-1);
   const dispatch = useDispatch();
+  const alert = useAlert();
 
   const {
     register,
@@ -26,6 +27,7 @@ const ProfilePage = () => {
     const newAddress = { ...user, addresses: [...user.addresses] };
     newAddress.addresses.splice(index, 1);
     dispatch(updateUserAddress(newAddress));
+    alert.success(" Address removed!");
   };
 
   const showFormHandler = () => {
@@ -54,6 +56,7 @@ const ProfilePage = () => {
     dispatch(updateUserAddress(newAddress));
     setShowForm((prevState) => !prevState);
     reset();
+    alert.success(" Address Added!");
   };
   const handleEditSubmit = (data) => {
     const newUser = { ...user, addresses: [...user.addresses] };
@@ -63,6 +66,8 @@ const ProfilePage = () => {
     dispatch(updateUserAddress(newUser));
     setShowEditForm((prevState) => !prevState);
     reset();
+
+    alert.success(" Address Updated!");
   };
 
   const [overlayIndex, setOverlayIndex] = useState(null);
@@ -112,49 +117,58 @@ const ProfilePage = () => {
                 </dt>
                 <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                   <ul className="">
-                    {user.addresses.map((u, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center cursor-pointer justify-between divide-y divide-gray-100 rounded-md border border-gray-200 py-4 pl-4 pr-5 text-sm leading-6"
-                        onClick={() => openOverlay(index)} // Attach click event listener
-                      >
-                        <div className="flex w-0 flex-1 items-center">
-                          <HomeIcon
-                            className="h-5 w-5 flex-shrink-0 text-gray-400"
-                            aria-hidden="true"
-                          />
-                          <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                            <span className="truncate font-medium">
-                              {u.street_address},
-                            </span>
-                            <span className="truncate font-medium">
-                              {u.city},
-                            </span>
-                            <span className="truncate font-medium">
-                              {u.province},
-                            </span>
-                            <span className="flex-shrink-0 text-gray-400">
-                              {u.country}{" "}
-                            </span>
+                    {user.addresses && user.addresses.length > 0 ? (
+                      user.addresses.map((u, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center justify-between divide-y divide-gray-100 rounded-md border border-gray-200 py-4 pl-4 pr-5 text-sm leading-6"
+                        >
+                          <div
+                            onClick={() => openOverlay(index)}
+                            className="flex w-0 flex-1 cursor-pointer hover:bg-gray-200 items-center"
+                          >
+                            <HomeIcon
+                              className="h-5 w-5 flex-shrink-0 text-gray-400"
+                              aria-hidden="true"
+                            />
+                            <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                              <span className="truncate font-medium">
+                                {u.street_address},
+                              </span>
+                              <span className="truncate font-medium">
+                                {u.city},
+                              </span>
+                              <span className="truncate font-medium">
+                                {u.province},
+                              </span>
+                              <span className="flex-shrink-0 text-gray-400">
+                                {u.country}{" "}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="ml-4 flex flex-col">
-                          <button
-                            onClick={(e) => editAddressHandler(e, index)}
-                            className="font-medium my-2 text-orange-600 hover:text-orange-500"
-                          >
-                            Update
-                          </button>
-                          <button
-                            href="#"
-                            onClick={(e) => removeAddressHandler(e, index)}
-                            className="font-medium my-2 text-orange-600 hover:text-orange-500"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </li>
-                    ))}
+                          <div className="ml-4 flex flex-col">
+                            <button
+                              onClick={(e) => editAddressHandler(e, index)}
+                              className="font-medium my-2 text-orange-600 hover:text-orange-500"
+                            >
+                              Update
+                            </button>
+                            <button
+                              href="#"
+                              onClick={(e) => removeAddressHandler(e, index)}
+                              className="font-medium my-2 text-orange-600 hover:text-orange-500"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <div className="flex items-center  py-4 text-sm text-gray-500">
+                        You haven't added any addresses yet.
+                      </div>
+                    )}
+
                     {!showForm && (
                       <div className="flex space-x-4">
                         {/* <button
@@ -165,61 +179,65 @@ const ProfilePage = () => {
                     </button> */}
                         <button
                           onClick={showFormHandler}
-                          className="flex items-center justify-center w-40 mt-10 rounded-md border bg-orange-500 px-6 py-2 text-base font-medium text-white"
+                          className="flex items-center justify-center w-50 mt-10 rounded-md border bg-orange-500 px-6 py-2 text-base font-medium text-white"
                         >
-                          Add Address
+                          Add Address{" "}
+                          <HomeIcon className="w-5 h-5 ml-2 -mr-1 text-white" />
                         </button>
                       </div>
                     )}
-                    {overlayIndex !== null && (
-                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white p-4 rounded-md max-w-md w-full mx-5">
-                          <h2 className="text-lg font-semibold mb-4">
-                            Address Details
-                          </h2>
-                          <div className="grid grid-cols-1 gap-2">
-                            <div className="flex  gap-1">
-                              <span className="font-semibold">
-                                Street Address:
-                              </span>
-                              <span>
-                                {user.addresses[overlayIndex].street_address}
-                              </span>
+                    {user.addresses &&
+                      overlayIndex !== null &&
+                      overlayIndex < user.addresses.length && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                          <div className="bg-white p-4 rounded-md max-w-md w-full mx-5">
+                            <h2 className="text-lg flex items-center font-semibold mb-4">
+                              Address Details{" "}
+                              <HomeIcon className="w-5 h-5 ml-2 -mr-1" />
+                            </h2>
+                            <div className="grid grid-cols-1 gap-2">
+                              <div className="flex gap-1">
+                                <span className="font-semibold">
+                                  Street Address:
+                                </span>
+                                <span>
+                                  {user.addresses[overlayIndex].street_address}
+                                </span>
+                              </div>
+                              <div className="flex gap-1">
+                                <span className="font-semibold">City:</span>
+                                <span>{user.addresses[overlayIndex].city}</span>
+                              </div>
+                              <div className="flex gap-1">
+                                <span className="font-semibold">Province:</span>
+                                <span>
+                                  {user.addresses[overlayIndex].province}
+                                </span>
+                              </div>
+                              <div className="flex gap-1">
+                                <span className="font-semibold">Country:</span>
+                                <span>
+                                  {user.addresses[overlayIndex].country}
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex  gap-1">
-                              <span className="font-semibold">City:</span>
-                              <span>{user.addresses[overlayIndex].city}</span>
-                            </div>
-                            <div className="flex gap-1">
-                              <span className="font-semibold">Province:</span>
-                              <span>
-                                {user.addresses[overlayIndex].province}
-                              </span>
-                            </div>
-                            <div className="flex  gap-1">
-                              <span className="font-semibold">Country:</span>
-                              <span>
-                                {user.addresses[overlayIndex].country}
-                              </span>
-                            </div>
+                            {/* Close button */}
+                            <button
+                              onClick={closeOverlay}
+                              className="mt-4 bg-gray-200 px-2 py-1 rounded-md text-sm"
+                            >
+                              Close
+                            </button>
                           </div>
-                          {/* Close button */}
-                          <button
-                            onClick={closeOverlay}
-                            className="mt-4 bg-gray-200 px-2 py-1 rounded-md text-sm"
-                          >
-                            Close
-                          </button>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </ul>
                 </dd>
               </div>
             </dl>
           </div>
           {showForm && (
-            <div className=" bg-white px-5 py-5  lg:px-10 mb-5 lg:py-6 my-4 lg:my-6">
+            <div className=" py-5 lg:px-10 mb-5 lg:py-6 my-4 lg:my-6 lg:bg-white">
               <form onSubmit={handleSubmit(onFormSubmit)}>
                 <div className="space-y-12">
                   <div className="border-b border-gray-900/10 pb-12">
@@ -430,12 +448,12 @@ const ProfilePage = () => {
             </div>
           )}
           {showEditForm && (
-            <div className=" bg-white px-5 py-5  lg:px-10 mb-5 lg:py-6 my-4 lg:my-6">
+            <div className=" lg:bg-white py-5  lg:px-10 mb-5 lg:py-6 my-4 lg:my-6">
               <form onSubmit={handleSubmit(handleEditSubmit)}>
                 <div className="space-y-12">
                   <div className="border-b border-gray-900/10 pb-12">
                     <h4 className="text-2xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-6">
-                      Add new address
+                      Edit address
                     </h4>
                     <p className="mt-1 text-sm leading-6 text-gray-600">
                       Use a permanent address where you can receive mail.

@@ -1,15 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import {
+  XMarkIcon,
+  HomeIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { updateUserAddress } from "../../store/userApi";
 import { createNewOrder } from "../../store/orderApi";
 import { fetchCartbyId } from "../../store/cartApi";
+import { useAlert } from "react-alert";
 
 export default function CheckoutDetails() {
   const dispatch = useDispatch();
+  const alert = useAlert();
 
   const [open, setOpen] = useState(false);
   const [addAddress, setAddAddress] = useState(false);
@@ -49,13 +55,14 @@ export default function CheckoutDetails() {
     .map((item) => +item.quantity)
     .reduce((total, quantity) => total + quantity, 0);
 
-  const onSubmit = (data) => {
+  const addUserAddress = (data) => {
     // Check if user.addresses is an array, and if not, initialize it as an empty array
 
     const updatedUser = { ...user, addresses: [...user.addresses, data] };
-    console.log(updatedUser);
+    setAddAddress((addrss) => !addrss);
     dispatch(updateUserAddress(updatedUser));
     reset();
+    alert.success(" Address added!");
   };
 
   const paymentHandler = (e) => {
@@ -156,13 +163,15 @@ export default function CheckoutDetails() {
                           </li>
                         ))}
                     </ul>
+
                     {!addAddress && (
                       <button
                         type="button"
                         onClick={addAddressHandler}
                         className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                       >
-                        Add New Address
+                        Add New Address{" "}
+                        <HomeIcon className="w-5 h-5 ml-2 -mr-1 text-white" />
                       </button>
                     )}
                     <div className="border-b border-gray-900/10 pb-12">
@@ -226,12 +235,13 @@ export default function CheckoutDetails() {
                   </div>
 
                   <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button
+                    <Link
                       type="button"
+                      to="/prodDetails"
                       className="text-sm font-semibold leading-6 text-gray-900"
                     >
                       Cancel
-                    </button>
+                    </Link>
                     {user.addresses && (
                       <button
                         type="submit"
@@ -251,7 +261,7 @@ export default function CheckoutDetails() {
 
               {addAddress && (
                 <div className="   rounded-md  mt-10 lg:px-10 py-4 lg:py-6 my-4 lg:my-5">
-                  <form onSubmit={handleSubmit(onSubmit)}>
+                  <form onSubmit={handleSubmit(addUserAddress)}>
                     <div className="space-y-12">
                       <div className="border-b border-gray-900/10 pb-12">
                         <h4 className="text-2xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-6">

@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon, StarIcon } from "@heroicons/react/24/outline";
 import Pagination from "../Pagination";
+import noProduct from "./noProduct.png";
 import { useEffect } from "react";
 import {
   fetchFilteredProductstData,
@@ -30,11 +31,11 @@ const sortOptions = [
   },
 ];
 const subCategories = [
-  { name: "Smartphones", href: "#" },
-  { name: "Laptops", href: "#" },
-  { name: "Fragrances", href: "#" },
-  { name: "Merchs", href: "#" },
-  { name: "Laptop Sleeves", href: "#" },
+  { value: "Smartphones", category: "smartphones" },
+  { value: "Laptops", category: "laptops" },
+  { value: "Fragrances", category: "fragrances" },
+  { value: "Merchs", category: "home-decoration" },
+  { value: "Laptop Sleeves", category: "laptops" },
 ];
 
 function classNames(...classes) {
@@ -53,7 +54,7 @@ export default function Products() {
   const [sortInfo, setSortInfo] = useState({ id: "", value: "", show: false });
   const [filterData, setFilterData] = useState({});
   const [page, setPage] = useState(1);
-
+  const [removeSort, setRemoveSort] = useState(false);
   const inputHandler = (e, section, option) => {
     const newFilter = { ...filterData };
     if (e.target.checked) {
@@ -64,8 +65,6 @@ export default function Products() {
         value: option.value,
         show: true,
       }));
-
-      console.log(sortInfo);
     } else {
       delete newFilter[section.id];
       setSortInfo({
@@ -76,6 +75,20 @@ export default function Products() {
     }
 
     setFilterData(newFilter);
+    console.log(newFilter);
+    setRemoveSort(true);
+    dispatch(fetchFilteredProductstData(newFilter));
+  };
+
+  const sortMajor = (category) => {
+    const newFilter = {
+      ...filterData,
+      category: category,
+    };
+    console.log(newFilter);
+    setFilterData(newFilter);
+    setRemoveSort(true);
+
     dispatch(fetchFilteredProductstData(newFilter));
   };
   const sortHandler = (e, option) => {
@@ -85,7 +98,13 @@ export default function Products() {
       _order: option._order,
     };
     setFilterData(newFilter);
+    setRemoveSort(true);
     dispatch(fetchFilteredProductstData(newFilter));
+  };
+
+  const handleRemoveFilter = () => {
+    setRemoveSort(false);
+    dispatch(fetchProductstData());
   };
 
   const pageHandler = (newPage) => {
@@ -168,13 +187,13 @@ export default function Products() {
                         <h3 className="sr-only">Categories</h3>
                         <ul className="px-2 py-3 font-medium text-gray-900">
                           {subCategories.map((category) => (
-                            <li key={category.name}>
-                              <a
-                                href={category.href}
+                            <li key={category.id}>
+                              <p
+                                onClick={(e) => sortMajor(category.category)}
                                 className="block px-2 py-3"
                               >
-                                {category.name}
-                              </a>
+                                {category.value}
+                              </p>
                             </li>
                           ))}
                         </ul>
@@ -325,8 +344,13 @@ export default function Products() {
                     <h3 className="sr-only">Categories</h3>
                     <ul className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
                       {subCategories.map((category) => (
-                        <li key={category.name}>
-                          <a href={category.href}>{category.name}</a>
+                        <li key={category.id}>
+                          <p
+                            className="cursor-pointer"
+                            onClick={(e) => sortMajor(category.category)}
+                          >
+                            {category.value}
+                          </p>
                         </li>
                       ))}
                     </ul>
@@ -397,6 +421,18 @@ export default function Products() {
                   {/* Product grid */}
                   <div className="lg:col-span-3">
                     <div className="bg-white">
+                      {removeSort && (
+                        <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-2 lg:max-w-7xl lg:px-8 flex items-center justify-between">
+                          <button
+                            className="px-4 py-2 text-sm flex items-center font-medium text-gray-500 hover:text-orange-500 focus:outline-none ml-auto"
+                            onClick={handleRemoveFilter}
+                          >
+                            <FunnelIcon className="w-5 h-5 mr-2" />
+                            Remove Filter
+                          </button>
+                        </div>
+                      )}
+
                       <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-2 lg:max-w-7xl lg:px-8">
                         {sortInfo.show && (
                           <div className="text-2xl font-bold tracking-tight text-gray-900">
@@ -434,13 +470,11 @@ export default function Products() {
                                         </h3>
                                         <p className="mt-1 text-sm text-gray-500 flex items-center">
                                           <StarIcon className="text-yellow-500 w-4 h-4 mr-1" />
-
                                           <span className="text-500 mr-1">
                                             {product.rating}
                                           </span>
                                         </p>
                                       </div>
-
                                       <div className="text-sm font-medium text-gray-900">
                                         <p className="text-gray-500 mb-1 line-through">
                                           ${product.price}
@@ -456,6 +490,18 @@ export default function Products() {
                                   </div>
                                 </Link>
                               )
+                          )}
+                          {productsData.length === 0 && (
+                            <div className="flex flex-col items-center justify-center col-span-full">
+                              <img
+                                className="w-46  mt-8 h-42 md:max-w-sm lg:max-w-md"
+                                src={noProduct}
+                                alt="no Product"
+                              />
+                              <p className="mt-2 text-center text-2xl ml-7 font-semibold text-gray-500">
+                                No such item.
+                              </p>
+                            </div>
                           )}
                         </div>
                       </div>
