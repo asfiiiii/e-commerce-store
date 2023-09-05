@@ -2,7 +2,7 @@ import { authActions } from "./authSlice";
 export const createNewUser = (userData) => {
   return async (dispatch) => {
     const createUser = async (user) => {
-      const response = await fetch("http://localhost:8080/auth/signup", {
+      const response = await fetch("/auth/signup", {
         method: "POST",
         body: JSON.stringify(user),
         headers: { "content-type": "application/json" },
@@ -29,9 +29,7 @@ export const loginUser = (userData) => {
         const email = user.email;
         const password = user.password;
         let query = `?email=${email}&password=${password}`;
-        const response = await fetch(
-          "http://localhost:8080/auth/login" + query
-        );
+        const response = await fetch("/auth/login" + query);
 
         if (!response.ok) {
           throw new Error("Invalid email or password");
@@ -59,7 +57,7 @@ export const checkUser = () => {
   return async (dispatch) => {
     try {
       const check = async () => {
-        const response = await fetch("http://localhost:8080/auth/check");
+        const response = await fetch("/auth/check");
 
         if (!response.ok) {
           throw new Error("Failed to get User through this data");
@@ -82,10 +80,40 @@ export const checkUser = () => {
   };
 };
 
+// export const logoutCurrentUser = () => {
+//   return async (dispatch) => {
+//     const logout = async () => {
+//       const response = await fetch("/auth/logout");
+
+//       if (!response.ok) {
+//         throw new Error("Failed to logout");
+//       }
+
+//       // If the response is OK, the user has successfully logged out
+//       return true;
+//     };
+
+//     try {
+//       const loggedOut = await logout();
+//       if (loggedOut) {
+//         dispatch(authActions.logoutUser());
+//       } else {
+//         throw new Error("User not logged out");
+//       }
+//     } catch (error) {
+//       // Handle any error that occurred during the logout process
+//       console.error(error);
+//       // You can dispatch an action to handle the error state in your Redux store if needed
+//     }
+//   };
+// };
+
 export const logoutCurrentUser = () => {
   return async (dispatch) => {
     const logout = async () => {
-      const response = await fetch("http://localhost:8080/auth/logout");
+      // Generate a random cache-busting value
+      const cacheBust = Math.floor(Math.random() * 1000000);
+      const response = await fetch(`/auth/logout?cacheBust=${cacheBust}`);
 
       if (!response.ok) {
         throw new Error("Failed to logout");

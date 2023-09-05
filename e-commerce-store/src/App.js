@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: "logout",
+        path: "logoutUser",
 
         element: <Logout />,
       },

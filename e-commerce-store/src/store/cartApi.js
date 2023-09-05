@@ -4,7 +4,7 @@ export const addItemtoCart = (cartData) => {
   return async (dispatch) => {
     try {
       const addCart = async (cart) => {
-        const response = await fetch("http://localhost:8080/cart", {
+        const response = await fetch("/cart", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(cart),
@@ -30,12 +30,15 @@ export const addItemtoCart = (cartData) => {
 export const fetchCartbyId = () => {
   return async (dispatch) => {
     const fetchCart = async () => {
-      const response = await fetch("http://localhost:8080/cart");
+      dispatch(cartActions.loadingStart()); // Dispatch loading start action
+      const response = await fetch("/cart");
 
       if (!response.ok) {
         return;
       }
       const data = await response.json();
+      dispatch(cartActions.loadingEnd()); // Dispatch loading end action
+
       return data;
     };
 
@@ -54,8 +57,9 @@ export const updateCartItem = (cartData) => {
     try {
       const updateCart = async (cart) => {
         const id = cart.id;
-        console.log(cart);
-        const response = await fetch("http://localhost:8080/cart/" + id, {
+        dispatch(cartActions.loadingStart()); // Dispatch loading start action
+
+        const response = await fetch("/cart/" + id, {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(cart),
@@ -66,6 +70,8 @@ export const updateCartItem = (cartData) => {
         }
 
         const data = await response.json();
+        dispatch(cartActions.loadingEnd()); // Dispatch loading end action
+
         return data;
       };
 
@@ -82,7 +88,9 @@ export const deleteItemfromCart = (cartId) => {
   return async (dispatch) => {
     try {
       const deleteItem = async (id) => {
-        const response = await fetch("http://localhost:8080/cart/" + id, {
+        dispatch(cartActions.loadingStart()); // Dispatch loading start action
+
+        const response = await fetch("/cart/" + id, {
           method: "DELETE",
           headers: { "content-type": "application/json" },
         });
@@ -90,6 +98,8 @@ export const deleteItemfromCart = (cartId) => {
         if (!response.ok) {
           throw new Error("Failed to Delete items from cart");
         }
+
+        dispatch(cartActions.loadingEnd()); // Dispatch loading end action
 
         return id;
       };

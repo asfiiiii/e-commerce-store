@@ -12,7 +12,6 @@ import { updateUserAddress } from "../../store/userApi";
 import { createNewOrder } from "../../store/orderApi";
 import { fetchCartbyId } from "../../store/cartApi";
 import { useAlert } from "react-alert";
-
 export default function CheckoutDetails() {
   const dispatch = useDispatch();
   const alert = useAlert();
@@ -214,6 +213,7 @@ export default function CheckoutDetails() {
                                   name="payment"
                                   type="radio"
                                   value="card"
+                                  disabled
                                   checked={paymentMethod === "card"}
                                   onChange={paymentHandler}
                                   className="h-4 w-4 my-auto mr-2 border-gray-300 text-orange-600 focus:ring-orange-600"
@@ -224,7 +224,10 @@ export default function CheckoutDetails() {
                                   htmlFor="Card payment"
                                   className="font-medium text-gray-900"
                                 >
-                                  Card payment
+                                  Card payment{" "}
+                                  <span class="text-gray-500 ml-1 text-xs">
+                                    Not available at moment
+                                  </span>
                                 </label>
                               </div>
                             </div>

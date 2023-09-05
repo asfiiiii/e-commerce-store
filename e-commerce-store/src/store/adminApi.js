@@ -4,7 +4,7 @@ export const fetchAllOrders = () => {
   //admin
   return async (dispatch) => {
     const order = async () => {
-      const response = await fetch("http://localhost:8080/admin/orders");
+      const response = await fetch("/admin/orders");
       if (!response.ok) {
         console.log("yaki hogyee");
         return;
@@ -24,7 +24,7 @@ export const updateOrderDetails = (data) => {
   return async (dispatch) => {
     const update = async (orderData) => {
       const id = orderData.id;
-      const response = await fetch("http://localhost:8080/admin/orders/" + id, {
+      const response = await fetch("/admin/orders/" + id, {
         method: "PATCH",
         body: JSON.stringify(orderData),
         headers: { "content-type": "application/json" },
@@ -52,9 +52,7 @@ export const fetchSortedOrderstData = (queryData) => {
     }
     console.log(query);
     const fetchData = async () => {
-      const responce = await fetch(
-        "http://localhost:8080/admin/orders/sort?" + query
-      );
+      const responce = await fetch("/admin/orders/sort?" + query);
       if (!responce.ok) {
         // throw new Error("Error in fetching");
       }

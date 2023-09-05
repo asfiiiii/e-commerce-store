@@ -4,7 +4,7 @@ export const getUserDetails = () => {
   return async (dispatch) => {
     try {
       const userDetails = async () => {
-        const response = await fetch("http://localhost:8080/user/:id");
+        const response = await fetch("/user/:id");
 
         if (!response.ok) {
           throw new Error("Failed to fetch user details");
@@ -27,7 +27,7 @@ export const updateUserAddress = (adress) => {
   return async (dispatch) => {
     const update = async (userAddress) => {
       const id = userAddress.id;
-      const response = await fetch("http://localhost:8080/user/" + id, {
+      const response = await fetch("/user/" + id, {
         method: "PATCH",
         body: JSON.stringify(userAddress),
         headers: { "content-type": "application/json" },

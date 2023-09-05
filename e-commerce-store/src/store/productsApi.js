@@ -2,12 +2,13 @@ import { productActions } from "./productSlice";
 export const fetchProductstData = () => {
   return async (dispatch) => {
     const fetchData = async () => {
-      const responce = await fetch("http://localhost:8080/products");
+      dispatch(productActions.loadingStart()); // Dispatch loading start action
+      const responce = await fetch("/products");
       if (!responce.ok) {
         // throw new Error("Error in fetching");
       }
       const data = await responce.json();
-
+      dispatch(productActions.loadingEnd()); // Dispatch loading end action
       return data;
     };
     try {
@@ -29,11 +30,14 @@ export const fetchFilteredProductstData = (newFilter, pagination) => {
     }
     const fetchData = async () => {
       console.log(query);
-      const response = await fetch("http://localhost:8080/products?" + query);
+      dispatch(productActions.loadingStart()); // Dispatch loading start action
+
+      const response = await fetch("/products?" + query);
       if (!response.ok) {
         // throw new Error("Error in fetching");
       }
       const data = await response.json();
+      dispatch(productActions.loadingEnd()); // Dispatch loading end action
 
       return data;
     };
@@ -49,12 +53,16 @@ export const fetchFilteredProductstData = (newFilter, pagination) => {
 export const fetchCategory = () => {
   return async (dispatch) => {
     const fetchCategories = async () => {
-      const response = await fetch("http://localhost:8080/category");
+      dispatch(productActions.loadingStart()); // Dispatch loading start action
+
+      const response = await fetch("/category");
 
       if (!response.ok) {
         return;
       }
       const data = await response.json();
+      dispatch(productActions.loadingEnd()); // Dispatch loading end action
+
       return data;
     };
 
@@ -69,12 +77,16 @@ export const fetchCategory = () => {
 export const fetchBrand = () => {
   return async (dispatch) => {
     const fetchBrands = async () => {
-      const response = await fetch("http://localhost:8080/brands");
+      dispatch(productActions.loadingStart()); // Dispatch loading start action
+
+      const response = await fetch("/brands");
 
       if (!response.ok) {
         return;
       }
       const data = await response.json();
+      dispatch(productActions.loadingEnd()); // Dispatch loading end action
+
       return data;
     };
 
@@ -89,12 +101,16 @@ export const fetchBrand = () => {
 export const fetchSelectedProduct = (id) => {
   return async (dispatch) => {
     const fetchSpecificProduct = async (id) => {
-      const response = await fetch("http://localhost:8080/products/" + id);
+      dispatch(productActions.loadingStart()); // Dispatch loading start action
+
+      const response = await fetch("/products/" + id);
 
       if (!response.ok) {
         return;
       }
       const data = await response.json();
+      dispatch(productActions.loadingEnd()); // Dispatch loading end action
+
       return data;
     };
 
@@ -111,7 +127,7 @@ export const fetchSelectedProduct = (id) => {
 export const createNewProduct = (product) => {
   return async (dispatch) => {
     const createProd = async (prodData) => {
-      const response = await fetch("http://localhost:8080/products", {
+      const response = await fetch("/products", {
         method: "POST",
         body: JSON.stringify(prodData),
         headers: { "content-type": "application/json" },
@@ -121,6 +137,7 @@ export const createNewProduct = (product) => {
         return;
       }
       const data = await response.json();
+
       return data;
     };
 
@@ -138,7 +155,7 @@ export const updateProductData = (prodData) => {
     try {
       const updateProduct = async (product) => {
         const id = product.id;
-        const response = await fetch("http://localhost:8080/products/" + id, {
+        const response = await fetch("/products/" + id, {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(product),
@@ -165,9 +182,7 @@ export const deleteProduct = (prodData) => {
   return async (dispatch) => {
     try {
       const deleteProduct = async (id) => {
-        const response = await fetch(
-          "http://localhost:8080/products/delete/" + id
-        );
+        const response = await fetch("/products/delete/" + id);
 
         if (!response.ok) {
           throw new Error("Failed to delete Product");

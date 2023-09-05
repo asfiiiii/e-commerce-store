@@ -1,6 +1,6 @@
 const passport = require("passport");
 const User = require("../Models/UserModel");
-require("dotenv").config;
+require("dotenv").config();
 const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 const opts = {};
@@ -9,8 +9,6 @@ var cookieExtractor = function (req) {
   if (req && req.cookies) {
     token = req.cookies["jwt"];
   }
-  token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFzZmFyIiwicGFzc3dvcmQiOiIkMmEkMTAkRkhsSGIxQ0cxa0lRVHAyVFNkTlVxT3p3MWJsY3BtN01yQWRTYkgxSjlad21HTDlGSUhPZ1ciLCJlbWFpbCI6ImFzZmFybWEyODE1QGdtYWlsLmNvbSIsImlhdCI6MTY5MzQxOTgwMCwiZXhwIjoxNjkzNTA2MjAwfQ.iJBrisJuCqehWMP7OnneexSCyNxXJ4naxiDNCGfThEE";
   return token;
 };
 // opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();

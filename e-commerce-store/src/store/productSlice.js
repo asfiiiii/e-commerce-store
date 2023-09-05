@@ -5,11 +5,18 @@ const initialState = {
   brands: [],
   category: [],
   selectedProduct: [],
+  isLoading: false,
 };
 const productSlice = createSlice({
   name: "products",
   initialState: initialState,
   reducers: {
+    loadingStart: (state) => {
+      state.isLoading = true;
+    },
+    loadingEnd: (state) => {
+      state.isLoading = false;
+    },
     showProducts(state, action) {
       state.products = action.payload.products;
     },
@@ -40,5 +47,6 @@ const productSlice = createSlice({
   },
 });
 
+export const isLoading = productSlice.isLoading;
 export const productActions = productSlice.actions;
 export default productSlice;

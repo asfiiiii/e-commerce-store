@@ -27,6 +27,7 @@ function AddProduct() {
     }
   }, [dispatch, id]);
 
+  console.log(productData);
   useEffect(() => {
     if (productData) {
       setValue("title", productData.title);
@@ -36,11 +37,14 @@ function AddProduct() {
       setValue("discountPercentage", productData.discountPercentage);
       setValue("description", productData.description);
       setValue("thumbnail", productData.thumbnail);
-      // setValue("image1", productData.images[0]);
-      // setValue("image2", productData.images[1]);
-      // setValue("image3", productData.images[2]);
+      if (productData.images && productData.images.length > 0) {
+        setValue("image1", productData.images[0]);
+        setValue("image2", productData.images[1]);
+        setValue("image3", productData.images[2]);
+      }
     }
   }, [productData, setValue]);
+
   const onSubmit = (data) => {
     const product = { ...data };
     product.images = [product.image1, product.image2, product.image3];

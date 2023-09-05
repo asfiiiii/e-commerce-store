@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCartItem, deleteItemfromCart } from "../../store/cartApi";
+import { ColorRing } from "react-loader-spinner";
 import { fetchCartbyId } from "../../store/cartApi";
 import { useAlert } from "react-alert";
 import emptycart from "./emptycart.png";
@@ -10,6 +11,7 @@ export default function CartDetail() {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const cartLoaded = useSelector((state) => state.cart.cartLoaded);
+  const isLoading = useSelector((state) => state.cart.isLoading);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToRemove, setItemToRemove] = useState(null);
@@ -54,6 +56,24 @@ export default function CartDetail() {
   return (
     <>
       {" "}
+      {isLoading && (
+        <h3 className="text-2xl md:text-3xl flex justify-center items-center lg:text-4xl font-bold mb-8 md:mb-10">
+          <div className="flex flex-col items-center justify-center z-50">
+            <div className="w-24 h-24  flex items-end">
+              {" "}
+              {/* Adjust the size here */}
+              <ColorRing
+                visible={true}
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+              />
+            </div>
+            <p className=" text-3xl text-gray-400">Loading...</p>
+          </div>
+        </h3>
+      )}
       {!cart && cartLoaded && <Navigate to="/prodDetails" />}
       {cartLoaded && cart && (
         <div className="mx-4 md:mx-8 lg:mx-60 mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">

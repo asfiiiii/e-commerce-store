@@ -4,11 +4,18 @@ const initialState = {
   cart: [],
   totalItems: 0,
   cartLoaded: false,
+  isLoading: false,
 };
 const cartSlice = createSlice({
   name: "cart",
   initialState: initialState,
   reducers: {
+    loadingStart: (state) => {
+      state.isLoading = true;
+    },
+    loadingEnd: (state) => {
+      state.isLoading = false;
+    },
     addItemtoCart(state, action) {
       state.cart.push(action.payload.items);
     },

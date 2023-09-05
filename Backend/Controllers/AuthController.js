@@ -89,9 +89,10 @@ exports.checkUser = async (req, res) => {
 };
 
 exports.logoutUser = async (req, res) => {
+  res.set("Cache-Control", "no-store, max-age=0");
   res
     .cookie("jwt", null, {
-      expires: new Date(Date.now()),
+      expires: new Date(0), // Set the expiration date to a past date
       httpOnly: true,
     })
     .sendStatus(200);
