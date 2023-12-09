@@ -32,33 +32,36 @@ app.use(express.json());
 // Middleware to handle URL-encoded data
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
-
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true, // Enable credentials (cookies, authorization headers, etc.)
+};
+app.use(cors(corsOptions));
 // stripe setup
 
-const stripe = require("stripe")(
-  "sk_test_51NjgcGSHr6F8DFBRHiUeqs7w4vQ4Xhr9ug0RFBO57FKUNI67h4nKMRyt9X7s5I2XAze3F70TqmLK0Nwl7PMgZmj700J056RY8L"
-);
+// const stripe = require("stripe")(
+//   "sk_test_51NjgcGSHr6F8DFBRHiUeqs7w4vQ4Xhr9ug0RFBO57FKUNI67h4nKMRyt9X7s5I2XAze3F70TqmLK0Nwl7PMgZmj700J056RY8L"
+// );
 
 // app.use(express.static("public"));
 
-app.post("/create-payment-intent", async (req, res) => {
-  const { totalAmount } = req.body;
+// app.post("/create-payment-intent", async (req, res) => {
+//   const { totalAmount } = req.body;
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalAmount,
-    currency: "pkr",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
+//   // Create a PaymentIntent with the order amount and currency
+//   const paymentIntent = await stripe.paymentIntents.create({
+//     amount: totalAmount,
+//     currency: "pkr",
+//     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+//     automatic_payment_methods: {
+//       enabled: true,
+//     },
+//   });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
-});
+//   res.send({
+//     clientSecret: paymentIntent.client_secret,
+//   });
+// });
 
 //routes
 app.use("/products", ProductsRoutes);
